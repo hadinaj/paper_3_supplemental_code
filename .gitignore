@@ -40,10 +40,31 @@ vignettes/*.pdf
 .Renviron
 
 # pkgdown site
-docs/
+#docs/
 
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Project data files
+data/
+*.csv
+*.csv.gz
+*.parquet
+
+# DuckDB database files
+*.duckdb
+*.duckdb.wal
+
+# Generated outputs
+output/
+results/
+
+# macOS
+.DS_Store
+
+# Secrets
+.env
+*.key
