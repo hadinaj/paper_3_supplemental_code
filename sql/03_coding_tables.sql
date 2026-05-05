@@ -1,5 +1,7 @@
--- 03_coding_tables.sql
--- Coding and dictionary table inspection for the MIMIC-IV Demo Step 0 workflow.
+-- This step is included because many EHR-derived datasets contain coded
+-- clinical fields and dictionary/reference tables. Inspecting these mappings
+-- can help identify candidate concepts, terminology structures, and lookup
+-- relationships for later conceptual modeling.
 
 -- Most frequent ICD diagnosis codes in the demo dataset
 SELECT

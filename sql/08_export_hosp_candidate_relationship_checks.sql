@@ -1,6 +1,24 @@
 -- 08_export_hosp_candidate_relationship_checks.sql
 -- Exports empirical checks for candidate relationships in the MIMIC-IV Demo hospital module.
--- These checks support Step 2: inferred PK/FK-style relationships.
+--
+-- Purpose:
+-- This script evaluates selected candidate relationships among hospital-module
+-- tables using join-based match checks. Candidate relationships are proposed
+-- from documented identifiers and shared identifier-like fields, but are not
+-- interpreted as formally declared database constraints.
+--
+-- Method:
+-- Each query compares the number of source rows with the number of rows that
+-- match a proposed reference table. Candidate relationships with zero unmatched
+-- rows can be treated as conservative inferred relationships for preliminary
+-- schema visualization. Candidate relationships with unmatched rows should be
+-- treated as partial or context-dependent links.
+--
+-- Input:
+-- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.
+--
+-- Output:
+--   - output/hosp_candidate_relationship_checks.csv
 
 COPY (
     SELECT

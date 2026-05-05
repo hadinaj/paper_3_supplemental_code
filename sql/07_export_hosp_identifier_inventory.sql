@@ -1,8 +1,25 @@
 -- 07_export_hosp_identifier_inventory.sql
--- Exports column and shared-identifier inventories for the MIMIC-IV Demo hospital module.
--- These outputs support Step 2 by identifying candidate relationship fields.
-
--- Full column inventory for all loaded hosp tables
+-- Exports table/column and identifier inventories for the MIMIC-IV Demo hospital module.
+--
+-- Purpose:
+-- This script generates preparatory work outputs for the Step 0 structural
+-- exploration workflow. The outputs document the hospital-module table and
+-- column structure, identify columns shared across multiple tables, and extract
+-- identifier-like fields that may support candidate key and relationship assessment.
+--
+-- Input:
+-- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.
+--
+-- Outputs:
+--   - output/hosp_column_inventory.csv
+--   - output/hosp_shared_columns.csv
+--   - output/hosp_identifier_columns.csv
+--
+-- Note:
+-- Shared column names and identifier-like fields are used to propose candidate
+-- relationships, but they do not establish formal database constraints.
+-- Candidate relationships are evaluated separately using join-based match
+-- checks in 08_export_hosp_candidate_relationship_checks.sql.
 COPY (
     SELECT
         table_schema,

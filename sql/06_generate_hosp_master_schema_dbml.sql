@@ -1,6 +1,22 @@
 -- 06_generate_hosp_master_schema_dbml.sql
 -- Generates a DBML file representing the hospital-module table and column structure.
--- This output supports Step 1 of the relational schema prototype: tables and columns only.
+--
+-- Purpose:
+-- This script creates a tables-and-columns-only DBML representation of the
+-- MIMIC-IV Demo hospital module. The output supports preliminary schema
+-- visualization for the Step 0 preparatory structural exploration workflow.
+--
+-- Input:
+-- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.
+--
+-- Output:
+-- output/hosp_master_schema_tables_only.dbml
+--
+-- Note:
+-- The generated DBML file does not include inferred relationships. Candidate
+-- relationships are evaluated separately in 08_export_hosp_candidate_relationship_checks.sql
+-- and added to the inferred schema representation in
+-- 09_generate_hosp_inferred_relationships_dbml.sql.
 COPY (
     SELECT dbml_line
     FROM (
@@ -43,5 +59,5 @@ COPY (
     )
     ORDER BY table_name, sort_order, ordinal_position
 )
-TO 'output/hosp_master_schema_step1_tables_only.dbml'
+TO 'output/hosp_master_schema_tables_only.dbml'
 WITH (FORMAT CSV, HEADER false, DELIMITER '|', QUOTE '');

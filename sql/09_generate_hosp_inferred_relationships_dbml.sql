@@ -1,7 +1,23 @@
 -- 09_generate_hosp_inferred_relationships_dbml.sql
--- Generates DBML for the MIMIC-IV Demo hospital-module inferred relational schema.
--- Relationships are conservative candidate associations based on shared identifiers
--- and empirical join checks with zero unmatched rows in the demo subset.
+-- Generates DBML components for a hospital-module schema visualization with inferred relationships.
+--
+-- Purpose:
+-- This script creates DBML output for preliminary schema visualization of the
+-- MIMIC-IV Demo hospital module. The relationship lines include only conservative
+-- inferred relationships supported by join-based match checks with zero unmatched
+-- source rows in 08_export_hosp_candidate_relationship_checks.sql.
+--
+-- Input:
+-- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.
+--
+-- Outputs:
+--   - output/hosp_inferred_schema_tables_part.dbml
+--   - output/hosp_inferred_schema_relationships_part.dbml
+--
+-- Note:
+-- The generated relationships are modeling assumptions for preliminary schema
+-- visualization. They should not be interpreted as formally declared database
+-- constraints in the source files.
 
 COPY (
     SELECT dbml_line
@@ -48,7 +64,7 @@ COPY (
     )
     ORDER BY table_name, sort_order, ordinal_position
 )
-TO 'output/hosp_master_schema_step2_tables_only_part.dbml'
+TO 'output/hosp_inferred_schema_tables_part.dbml'
 WITH (FORMAT CSV, HEADER false, DELIMITER '|', QUOTE '');
 
 COPY (
@@ -91,5 +107,5 @@ COPY (
     )
     ORDER BY sort_order
 )
-TO 'output/hosp_master_schema_step2_relationships_part.dbml'
+TO 'output/hosp_inferred_schema_relationships_part.dbml'
 WITH (FORMAT CSV, HEADER false, DELIMITER '|', QUOTE '');

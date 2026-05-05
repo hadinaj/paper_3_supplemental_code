@@ -1,5 +1,22 @@
 -- 05_load_all_hosp_tables.sql
--- Loads all MIMIC-IV Demo hospital-module tables into the local DuckDB database.
+-- Loads all MIMIC-IV Demo hospital-module tables into a local DuckDB database.
+--
+-- Purpose:
+-- This script prepares the main hospital-module dataset used for the Step 0
+-- preparatory structural exploration workflow. The hospital module is the
+-- primary scope of the manuscript demonstration.
+--
+-- Input:
+-- Compressed MIMIC-IV Demo CSV files stored locally under:
+-- data/raw/mimic-iv-clinical-database-demo-2.2/hosp/
+--
+-- Output:
+-- DuckDB tables created under the hosp schema.
+--
+-- Note:
+-- The raw CSV files are not modified. CREATE OR REPLACE TABLE creates local
+-- DuckDB tables from the compressed CSV files so that subsequent scripts can
+-- inspect table structures, identifiers, and candidate relationships.
 CREATE SCHEMA IF NOT EXISTS hosp;
 
 CREATE OR REPLACE TABLE hosp.admissions AS
