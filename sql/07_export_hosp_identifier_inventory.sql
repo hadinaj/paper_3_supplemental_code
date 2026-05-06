@@ -14,6 +14,7 @@
 --   - output/hosp_column_inventory.csv
 --   - output/hosp_shared_columns.csv
 --   - output/hosp_identifier_columns.csv
+--   - output/hosp_table_row_counts.csv
 --
 -- Note:
 -- Shared column names and identifier-like fields are used to propose candidate
@@ -77,4 +78,54 @@ COPY (
     ORDER BY column_name, table_name, ordinal_position
 )
 TO 'output/hosp_identifier_columns.csv'
+WITH (HEADER, DELIMITER ',');
+
+-- Row counts for all loaded hospital-module tables
+COPY (
+    SELECT 'admissions' AS table_name, COUNT(*) AS row_count FROM hosp.admissions
+    UNION ALL
+    SELECT 'd_hcpcs', COUNT(*) FROM hosp.d_hcpcs
+    UNION ALL
+    SELECT 'd_icd_diagnoses', COUNT(*) FROM hosp.d_icd_diagnoses
+    UNION ALL
+    SELECT 'd_icd_procedures', COUNT(*) FROM hosp.d_icd_procedures
+    UNION ALL
+    SELECT 'd_labitems', COUNT(*) FROM hosp.d_labitems
+    UNION ALL
+    SELECT 'diagnoses_icd', COUNT(*) FROM hosp.diagnoses_icd
+    UNION ALL
+    SELECT 'drgcodes', COUNT(*) FROM hosp.drgcodes
+    UNION ALL
+    SELECT 'emar', COUNT(*) FROM hosp.emar
+    UNION ALL
+    SELECT 'emar_detail', COUNT(*) FROM hosp.emar_detail
+    UNION ALL
+    SELECT 'hcpcsevents', COUNT(*) FROM hosp.hcpcsevents
+    UNION ALL
+    SELECT 'labevents', COUNT(*) FROM hosp.labevents
+    UNION ALL
+    SELECT 'microbiologyevents', COUNT(*) FROM hosp.microbiologyevents
+    UNION ALL
+    SELECT 'omr', COUNT(*) FROM hosp.omr
+    UNION ALL
+    SELECT 'patients', COUNT(*) FROM hosp.patients
+    UNION ALL
+    SELECT 'pharmacy', COUNT(*) FROM hosp.pharmacy
+    UNION ALL
+    SELECT 'poe', COUNT(*) FROM hosp.poe
+    UNION ALL
+    SELECT 'poe_detail', COUNT(*) FROM hosp.poe_detail
+    UNION ALL
+    SELECT 'prescriptions', COUNT(*) FROM hosp.prescriptions
+    UNION ALL
+    SELECT 'procedures_icd', COUNT(*) FROM hosp.procedures_icd
+    UNION ALL
+    SELECT 'provider', COUNT(*) FROM hosp.provider
+    UNION ALL
+    SELECT 'services', COUNT(*) FROM hosp.services
+    UNION ALL
+    SELECT 'transfers', COUNT(*) FROM hosp.transfers
+    ORDER BY table_name
+)
+TO 'output/hosp_table_row_counts.csv'
 WITH (HEADER, DELIMITER ',');
