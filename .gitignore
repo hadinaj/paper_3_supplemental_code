@@ -48,19 +48,26 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# Project data files
+# Raw/local data files
 data/
+raw_data/
+mimic-iv-demo/
 *.csv
 *.csv.gz
 *.parquet
+*.zip
 
 # DuckDB database files
 *.duckdb
 *.duckdb.wal
 
-# Generated outputs
+# Generated outputs/results from data
 output/
 results/
+
+# Local scratch files
+scratch/
+tmp/
 
 # macOS
 .DS_Store
