@@ -1,3 +1,20 @@
+# Supplemental code and outputs
+
+This repository supports the framework application described in the manuscript. It contains SQL/DuckDB scripts and generated outputs for applying the framework to the MIMIC-IV Demo hospital module.
+
+The repository is organized around the reproducible parts of the framework:
+
+1. Identify input data structures and documentation
+2. Inspect source data structures
+3. Construct the conceptual data model artifact
+
+Stakeholder review, refinement, and adaptation are part of the proposed framework but were not empirically implemented in this repository.
+
+## Repository status
+
+The repository is being reorganized to align with the manuscript terminology and framework steps.
+
+
 # Paper 3 Supplemental Code
 
 This repository contains supplemental SQL code for the Step 0 demonstration of preparatory structural exploration using the MIMIC-IV Demo dataset.
