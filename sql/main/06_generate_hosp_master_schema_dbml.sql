@@ -3,14 +3,14 @@
 --
 -- Purpose:
 -- This script creates a tables-and-columns-only DBML representation of the
--- MIMIC-IV Demo hospital module. The output supports preliminary schema
--- visualization for the Step 0 preparatory structural exploration workflow.
+-- MIMIC-IV Demo hospital module. The output supports schema representation
+-- before relationship filtering.
 --
 -- Input:
 -- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.
 --
 -- Output:
--- output/hosp_master_schema_tables_only.dbml
+-- schema/hosp_master_schema_tables_only.dbml
 --
 -- Note:
 -- The generated DBML file does not include inferred relationships. Candidate

@@ -1,8 +1,8 @@
-# Preliminary Conceptual Model Mapping
+# Conceptual Model Mapping
 
-This document records how selected MIMIC-IV Demo hospital-module tables were interpreted as candidate conceptual entities or supporting reference structures during Step 0. These mappings are preliminary and are intended to support later stakeholder review.
+This document records how selected MIMIC-IV Demo hospital-module tables were interpreted as candidate conceptual entities or supporting reference structures during construction of the conceptual data model artifact. These mappings are intended to preserve traceability from inspected source structures to candidate conceptual model elements.
 
-| Conceptual model term | Meaning in the preliminary model | Related MIMIC-IV Demo table(s) | Key identifier-like fields | Notes for stakeholder review |
+| Conceptual model term | Meaning in the conceptual data model | Related MIMIC-IV Demo table(s)
 |---|---|---|---|---|
 | Patient | Person receiving care | `patients` | `subject_id` | Candidate patient-level entity |
 | Hospital admission | Hospitalization episode | `admissions` | `hadm_id`, `subject_id` | Candidate admission-level entity/event |

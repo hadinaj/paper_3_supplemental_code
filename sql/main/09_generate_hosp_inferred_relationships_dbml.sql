@@ -2,8 +2,8 @@
 -- Generates DBML components for a hospital-module schema visualization with inferred relationships.
 --
 -- Purpose:
--- This script creates DBML output for preliminary schema visualization of the
--- MIMIC-IV Demo hospital module. The relationship lines include only conservative
+-- This script creates DBML output for a relationship-enhanced schema representation
+-- of the MIMIC-IV Demo hospital module. The relationship lines include conservative
 -- inferred relationships supported by join-based match checks with zero unmatched
 -- source rows in 08_export_hosp_candidate_relationship_checks.sql.
 --
@@ -15,8 +15,8 @@
 --   - output/hosp_inferred_schema_relationships_part.dbml
 --
 -- Note:
--- The generated relationships are modeling assumptions for preliminary schema
--- visualization. They should not be interpreted as formally declared database
+-- The generated relationships are inferred modeling relationships for schema
+-- representation. They should not be interpreted as formally declared database
 -- constraints in the source files.
 
 COPY (

@@ -10,9 +10,9 @@
 -- Method:
 -- Each query compares the number of source rows with the number of rows that
 -- match a proposed reference table. Candidate relationships with zero unmatched
--- rows can be treated as conservative inferred relationships for preliminary
--- schema visualization. Candidate relationships with unmatched rows should be
--- treated as partial or context-dependent links.
+-- rows are treated as conservative inferred relationships for schema
+-- representation. Candidate relationships with unmatched rows are retained as
+-- partial or context-dependent links requiring review.
 --
 -- Input:
 -- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.

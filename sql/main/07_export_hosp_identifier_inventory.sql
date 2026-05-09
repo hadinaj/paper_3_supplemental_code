@@ -2,10 +2,10 @@
 -- Exports table/column and identifier inventories for the MIMIC-IV Demo hospital module.
 --
 -- Purpose:
--- This script generates preparatory work outputs for the Step 0 structural
--- exploration workflow. The outputs document the hospital-module table and
--- column structure, identify columns shared across multiple tables, and extract
--- identifier-like fields that may support candidate key and relationship assessment.
+-- This script generates structural inventory outputs for the MIMIC-IV Demo
+-- hospital module. The outputs document the table and column structure,
+-- identify columns shared across multiple tables, and extract identifier-like
+-- fields that may support candidate key and relationship assessment.
 --
 -- Input:
 -- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.

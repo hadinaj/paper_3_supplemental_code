@@ -2,9 +2,9 @@
 -- Loads all MIMIC-IV Demo hospital-module tables into a local DuckDB database.
 --
 -- Purpose:
--- This script prepares the main hospital-module dataset used for the Step 0
--- preparatory structural exploration workflow. The hospital module is the
--- primary scope of the manuscript demonstration.
+-- This script prepares the MIMIC-IV Demo hospital-module tables used for the
+-- framework application. The hospital module is the selected source-data
+-- environment for the manuscript.
 --
 -- Input:
 -- Compressed MIMIC-IV Demo CSV files stored locally under:
