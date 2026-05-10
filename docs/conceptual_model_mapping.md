@@ -1,20 +1,28 @@
 # Conceptual Model Mapping
 
-This document records how selected MIMIC-IV Demo hospital-module tables were interpreted as candidate conceptual entities or supporting reference structures during construction of the conceptual data model artifact. These mappings are intended to preserve traceability from inspected source structures to candidate conceptual model elements.
+This document records how selected MIMIC-IV Demo hospital-module tables were interpreted as candidate conceptual entities, supporting reference structures, or supporting detail structures during construction of the conceptual data model artifact. These mappings are intended to preserve traceability from inspected source structures to candidate conceptual model elements. They do not represent a formal OMOP, FHIR, or implementation-level mapping.
 
-| Conceptual model term | Meaning in the conceptual data model | Related MIMIC-IV Demo table(s)
+| Conceptual model term | Meaning in the conceptual data model | Related MIMIC-IV Demo table(s) | Key or linking field(s) | Modeling note |
 |---|---|---|---|---|
 | Patient | Person receiving care | `patients` | `subject_id` | Candidate patient-level entity |
 | Hospital admission | Hospitalization episode | `admissions` | `hadm_id`, `subject_id` | Candidate admission-level entity/event |
-| Care location event | Ward/unit movement or location-related episode | `transfers` | `transfer_id`, `subject_id`, `hadm_id`, `stay_id` | Needs stakeholder clarification because location movements may not always represent clinically distinct care episodes |
+| Care location event | Ward/unit movement or location-related episode | `transfers` | `transfer_id`, `subject_id`, `hadm_id` | Candidate contextual/event structure; admission-level link should be interpreted cautiously if relationship checks are partial |
+| Clinical service context | Hospital service assignment or service context | `services` | `subject_id`, `hadm_id` | Candidate contextual structure for admission-level care |
 | Diagnosis | Diagnosis associated with a hospital admission | `diagnoses_icd` | `subject_id`, `hadm_id`, `icd_code`, `icd_version` | Linked to diagnosis code definitions |
 | Diagnosis code definition | Reference definition for ICD diagnosis codes | `d_icd_diagnoses` | `icd_code`, `icd_version` | Supporting dictionary/reference structure |
 | Procedure | Procedure associated with a hospital admission | `procedures_icd` | `subject_id`, `hadm_id`, `icd_code`, `icd_version` | Linked to procedure code definitions |
 | Procedure code definition | Reference definition for ICD procedure codes | `d_icd_procedures` | `icd_code`, `icd_version` | Supporting dictionary/reference structure |
 | Laboratory observation | Laboratory result or measurement event | `labevents` | `labevent_id`, `subject_id`, `hadm_id`, `itemid` | `hadm_id` link was partial in the demo subset; admission-level interpretation may require caution |
 | Laboratory item definition | Reference definition for laboratory item codes | `d_labitems` | `itemid` | Supporting dictionary/reference structure |
+| Microbiology observation | Microbiology test, organism, and susceptibility-related event | `microbiologyevents` | `microevent_id`, `subject_id`, `hadm_id`, `micro_specimen_id`, `spec_itemid`, `test_itemid`, `org_itemid`, `ab_itemid` | Candidate microbiology event structure; item-like fields are retained as attributes unless dedicated reference structures and checked links are added |
 | Provider order | Order placed in the provider order entry system | `poe` | `poe_id`, `subject_id`, `hadm_id` | Candidate order-level structure |
+| Provider order detail | Supporting detail fields for provider orders | `poe_detail` | `poe_id`, `poe_seq`, `subject_id` | Supporting detail/extension structure rather than a primary conceptual entity |
 | Medication prescription | Medication prescription/order record | `prescriptions` | `subject_id`, `hadm_id`, `pharmacy_id`, `poe_id` | Medication concept may require alignment across order, pharmacy, and administration tables |
-| Pharmacy workflow record | Pharmacy-related medication workflow record | `pharmacy` | `pharmacy_id`, `subject_id`, `hadm_id`, `poe_id` | May represent dispensing/workflow context rather than a simple medication entity |
-| Medication administration | Medication administration event | `emar` | `emar_id`, `subject_id`, `hadm_id`, `pharmacy_id` | `hadm_id` link was partial in the demo subset; should be reviewed cautiously |
-| Clinical service context | Hospital service assignment or service context | `services` | `subject_id`, `hadm_id` | Candidate contextual structure for admission-level care |
+| Pharmacy / dispense context | Pharmacy-related medication workflow or dispensing context | `pharmacy` | `pharmacy_id`, `subject_id`, `hadm_id`, `poe_id` | May represent dispensing/workflow context rather than a simple medication entity |
+| Medication administration | Medication administration event | `emar` | `emar_id`, `subject_id`, `hadm_id`, `pharmacy_id`, `poe_id` | `hadm_id` link was partial in the demo subset; should be reviewed cautiously |
+| Medication administration detail | Supporting detail fields for medication administration | `emar_detail` | `subject_id`, `emar_id`, `emar_seq`, `pharmacy_id` | Supporting detail/extension structure rather than a primary conceptual entity |
+| OMR measurement | Outpatient medical record measurement or result-like entry | `omr` | `subject_id` | Candidate patient-level observation/context structure; may be deferred from the main conceptual figure depending on scope |
+| DRG code record | Diagnosis-related group code associated with an admission | `drgcodes` | `subject_id`, `hadm_id`, `drg_code` | Coding/billing-related structure; may be represented in the full source-traceable schema output |
+| HCPCS event | HCPCS-coded hospital event or billing-related procedure record | `hcpcsevents` | `subject_id`, `hadm_id`, `hcpcs_cd` | Coding/billing-related structure; may be represented in the full source-traceable schema output |
+| HCPCS code definition | Reference definition for HCPCS codes | `d_hcpcs` | `code` | Supporting dictionary/reference structure |
+| Provider | Provider identifier reference structure | `provider` | `provider_id` | Supporting identifier/reference structure |
