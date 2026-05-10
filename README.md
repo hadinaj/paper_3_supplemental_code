@@ -36,6 +36,15 @@ The structural inventories and relationship assessments are used to support cons
 
 Stakeholder review, refinement, and adaptation are part of the proposed framework, but were not empirically implemented in this repository.
 
+### Conceptual model mapping artifacts
+
+The conceptual model is supported by two mapping artifacts:
+
+1. `docs/conceptual_entity_mapping.md` records table-level mappings from MIMIC-IV Demo hospital-module source structures to candidate conceptual entities, supporting reference structures, and modeling notes.
+2. `docs/source_to_concept_attribute_dictionary.csv` records column-level source-to-concept mappings used to preserve traceability and support coverage checks.
+
+The entity mapping is intended to be human-readable. The attribute dictionary is intended to support verification that inspected source tables and columns are either represented directly, grouped into conceptual attributes, used as identifiers/linking fields, or recorded as supporting/reference fields.
+
 ## Repository structure
 
 ```text
