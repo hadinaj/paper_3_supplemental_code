@@ -675,6 +675,20 @@ COPY (
         FROM hosp.hcpcsevents h
         LEFT JOIN (SELECT DISTINCT code FROM hosp.d_hcpcs) dh
             ON h.hcpcs_cd = dh.code
+
+                    UNION ALL
+
+        SELECT
+            'omr.subject_id -> patients.subject_id',
+            COUNT(*),
+            COUNT(*) FILTER (WHERE o.subject_id IS NOT NULL),
+            COUNT(*) FILTER (WHERE o.subject_id IS NULL),
+            COUNT(*) FILTER (WHERE p.subject_id IS NOT NULL),
+            COUNT(*) FILTER (WHERE o.subject_id IS NOT NULL AND p.subject_id IS NULL)
+        FROM hosp.omr o
+        LEFT JOIN (SELECT DISTINCT subject_id FROM hosp.patients) p
+            ON o.subject_id = p.subject_id
+            
     )
 
     SELECT
