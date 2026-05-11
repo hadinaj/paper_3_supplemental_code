@@ -36,14 +36,18 @@ The structural inventories and relationship assessments are used to support cons
 
 Stakeholder review, refinement, and adaptation are part of the proposed framework, but were not empirically implemented in this repository.
 
-### Conceptual model mapping artifacts
 
-The conceptual model is supported by two mapping artifacts:
+### Conceptual model documentation artifacts
 
-1. `docs/conceptual_entity_mapping.md` records table-level mappings from MIMIC-IV Demo hospital-module source structures to candidate conceptual entities, supporting reference structures, and modeling notes.
-2. `docs/source_to_concept_attribute_dictionary.csv` records column-level source-to-concept mappings used to preserve traceability and support coverage checks.
+The conceptual data model artifact is supported by several documentation artifacts with distinct roles:
 
-The entity mapping is intended to be human-readable. The attribute dictionary is intended to support verification that inspected source tables and columns are either represented directly, grouped into conceptual attributes, used as identifiers/linking fields, or recorded as supporting/reference fields.
+1. `docs/conceptual_entity_mapping.md` records table-level mappings from MIMIC-IV Demo hospital-module source tables to candidate conceptual entities, reference entities, detail or workflow-specific structures, and modeling notes.
+
+2. `docs/source_to_concept_attribute_dictionary.csv` records column-level source-to-concept mappings. It is used to preserve traceability and support coverage checks by indicating whether inspected source fields were represented directly, grouped into conceptual attributes, used as candidate identifiers or linking fields, retained as reference/supporting fields, or not shown in the main artifact.
+
+3. `docs/conceptual_model_representation_notes.md` documents representation decisions used in the conceptual data model artifact, including candidate entities, selected attributes, candidate identifiers and linking fields, grouped attribute structures, supporting structures, and relationship notation.
+
+4. `docs/conceptual_model_entity_crosswalk.md` provides an orientation aid comparing candidate conceptual entities with broad FHIR and OMOP representations. It is not a formal FHIR or OMOP mapping, ETL specification, or conformance assessment.
 
 ## Repository structure
 

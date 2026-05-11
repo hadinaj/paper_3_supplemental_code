@@ -1,30 +1,32 @@
 # Conceptual Entity Mapping
 
-This document records how selected MIMIC-IV Demo hospital-module source tables were interpreted as candidate conceptual entities, supporting reference structures, or source structures used in the conceptual data model. The mapping preserves traceability from inspected source structures to conceptual model elements.
+This document records how the MIMIC-IV Demo hospital-module source tables were interpreted during construction of the conceptual data model artifact. It maps inspected source tables to candidate conceptual entities, reference entities, detail or workflow-specific structures, or source structures retained for traceability. The mapping preserves table-level traceability from inspected source structures to conceptual model elements and supporting modeling decisions.
 
 The mappings are intended for stakeholder review and methodological transparency. They do not represent finalized stakeholder-validated concepts or formal database constraints.
 
-| conceptual_entity | meaning_in_conceptual_model | related_source_table(s) | candidate_identifier_or_linking_field(s) | modeling_role | notes |
-|---|---|---|---|---|---|
-| Patient | Person receiving care | `patients` | `subject_id` | Core entity | Patient-level anchor. |
-| Hospital admission | Hospitalization episode for a patient | `admissions` | `hadm_id`, `subject_id`, `admit_provider_id` | Core entity/event | Admission-level anchor. The `admissions` table can be treated as a definition table for `hadm_id`. |
-| Care location event | Physical location or unit movement during care | `transfers` | `transfer_id`, `subject_id`, `hadm_id` | Context/event entity | Represents location-level care movement. Some transfer rows may not carry `hadm_id`; relationship should be interpreted using relationship-check output. |
-| Clinical service context | Service assignment or service context during hospitalization | `services` | `subject_id`, `hadm_id`, `transfertime` | Context entity | Represents the clinical service caring for the patient, which may differ from physical location. |
-| Diagnosis | Billed diagnosis associated with a hospitalization | `diagnoses_icd` | `subject_id`, `hadm_id`, `icd_code`, `icd_version` | Clinical/billing entity | Linked to diagnosis code definition. |
-| Diagnosis code definition | Reference definition for ICD diagnosis codes | `d_icd_diagnoses` | `icd_code`, `icd_version` | Reference structure | Supports interpretation of coded diagnosis fields. |
-| Procedure | Billed procedure associated with a hospitalization | `procedures_icd` | `subject_id`, `hadm_id`, `icd_code`, `icd_version` | Clinical/billing entity | Linked to procedure code definition. |
-| Procedure code definition | Reference definition for ICD procedure codes | `d_icd_procedures` | `icd_code`, `icd_version` | Reference structure | Supports interpretation of coded procedure fields. |
-| DRG assignment | Diagnosis-related group assigned for reimbursement | `drgcodes` | `subject_id`, `hadm_id`, `drg_code` | Billing/classification entity | Represents reimbursement-oriented classification rather than direct clinical event. |
-| HCPCS billed event | Billed hospital event represented by HCPCS/CPT code | `hcpcsevents` | `subject_id`, `hadm_id`, `hcpcs_cd`, `seq_num` | Billing/event entity | Linked to HCPCS code definition where available. |
-| HCPCS code definition | Reference definition for HCPCS/CPT codes | `d_hcpcs` | `code` | Reference structure | Not all code definitions may be available because of licensing restrictions. |
-| Laboratory observation | Laboratory result or measurement event | `labevents` | `labevent_id`, `subject_id`, `hadm_id`, `itemid`, `specimen_id`, `order_provider_id` | Clinical observation entity | Admission link should be interpreted cautiously because some lab rows lack `hadm_id`; documentation notes that time-based joins may be needed for labs proximal to hospital stays. |
-| Laboratory item definition | Reference definition for laboratory item codes | `d_labitems` | `itemid` | Reference structure | Defines laboratory item labels, fluids, and categories. |
-| Microbiology observation | Microbiology specimen/test/organism/susceptibility result structure | `microbiologyevents` | `microevent_id`, `subject_id`, `hadm_id`, `micro_specimen_id`, `order_provider_id` | Clinical observation entity | A single specimen may generate multiple rows depending on organism growth and antibiotic susceptibility testing. |
-| Provider | Deidentified provider/caregiver reference used in hospital module | `provider` | `provider_id` | Reference structure | Provider-related columns may appear with prefixes such as `admit_provider_id`, `order_provider_id`, and `enter_provider_id`. |
-| Provider order | Order placed through provider order entry | `poe` | `poe_id`, `poe_seq`, `subject_id`, `hadm_id`, `order_provider_id` | Workflow/order entity | Represents the provider order entry interface. |
-| Provider order detail | Supplementary details for provider orders | `poe_detail` | `poe_id`, `poe_seq`, `field_name`, `field_value` | Supporting detail structure | Uses an entity-attribute-value pattern and may be represented as detail attributes of provider order. |
-| Medication prescription | Medication prescription/order record | `prescriptions` | `subject_id`, `hadm_id`, `pharmacy_id`, `poe_id`, `poe_seq`, `order_provider_id` | Medication workflow entity | Medication concept should be interpreted across order, prescription, pharmacy, and administration structures. |
-| Pharmacy workflow record | Pharmacy-related medication workflow or dispensing context | `pharmacy` | `pharmacy_id`, `subject_id`, `hadm_id`, `poe_id` | Medication workflow entity | Represents detailed formulary, dosing, route, frequency, and pharmacy workflow information. |
-| Medication administration | Medication administration event recorded in eMAR | `emar` | `emar_id`, `emar_seq`, `subject_id`, `hadm_id`, `poe_id`, `pharmacy_id`, `enter_provider_id` | Medication administration entity | eMAR should be interpreted as available medication administration data, not complete administration coverage for all patients. |
-| Medication administration detail | Supplementary details for medication administration | `emar_detail` | `emar_id`, `emar_seq`, `subject_id`, `pharmacy_id` | Supporting detail structure | Contains dose due, dose given, product, route, and other details associated with eMAR administration. |
-| Online medical record measurement/context | Miscellaneous EHR measurements and outpatient/inpatient observations | `omr` | `subject_id`, `chartdate`, `seq_num` | Supporting clinical context entity | Includes values such as blood pressure, height, weight, BMI, and eGFR. May be included in source coverage even if not emphasized in main conceptual model. |
+| Source table | Conceptual entity or structure | Modeling role | Candidate identifier or linking field(s) | Notes |
+|---|---|---|---|---|
+| Source table | Conceptual entity or structure | Modeling role | Candidate identifier or linking field(s) | Notes |
+|---|---|---|---|---|
+| patients | Patient | candidate entity | subject_id | Patient-level source table. |
+| admissions | Hospital admission | candidate entity | hadm_id; subject_id | Admission-level source table. |
+| transfers | Care location event | candidate entity | transfer_id; hadm_id; subject_id | Physical location or unit transfer source table. |
+| services | Clinical service context | candidate entity | hadm_id; subject_id | Hospital service context source table. |
+| diagnoses_icd | Diagnosis | candidate entity | subject_id; hadm_id; icd_code; icd_version | Billed diagnosis source table. |
+| d_icd_diagnoses | Diagnosis code definition | reference entity | icd_code; icd_version | ICD diagnosis code dictionary. |
+| procedures_icd | Procedure | candidate entity | subject_id; hadm_id; icd_code; icd_version | Billed procedure source table. |
+| d_icd_procedures | Procedure code definition | reference entity | icd_code; icd_version | ICD procedure code dictionary. |
+| drgcodes | DRG assignment | candidate entity | subject_id; hadm_id; drg_code | DRG reimbursement classification source table. |
+| hcpcsevents | HCPCS billed event | candidate entity | subject_id; hadm_id; hcpcs_cd | HCPCS/CPT billed event source table. |
+| d_hcpcs | HCPCS code definition | reference entity | code | HCPCS/CPT code dictionary. |
+| labevents | Laboratory observation | candidate entity | labevent_id; subject_id; hadm_id; itemid | Laboratory result source table. |
+| d_labitems | Laboratory item definition | reference entity | itemid | Laboratory item dictionary. |
+| microbiologyevents | Microbiology observation | candidate entity | microevent_id; subject_id; hadm_id | Microbiology specimen/test/result source table. |
+| provider | Provider | reference entity | provider_id | Provider identifier reference table. |
+| poe | Provider order | candidate entity | poe_id; subject_id; hadm_id | Provider order entry source table. |
+| poe_detail | Provider order detail | detail or workflow-specific structure | poe_id; field_name | EAV-style supplementary order detail table. |
+| prescriptions | Medication prescription | candidate entity | pharmacy_id; poe_id; subject_id; hadm_id | Medication prescription source table. |
+| pharmacy | Pharmacy workflow record | candidate entity | pharmacy_id; poe_id; subject_id; hadm_id | Pharmacy medication workflow source table. |
+| emar | Medication administration | candidate entity | emar_id; pharmacy_id; poe_id; subject_id; hadm_id | Electronic medication administration source table. |
+| emar_detail | Medication administration detail | detail or workflow-specific structure | emar_id; pharmacy_id | Supplementary eMAR detail source table. |
+| omr | Online medical record measurement/context | candidate entity | subject_id; chartdate | Online medical record measurements and miscellaneous EHR context. |

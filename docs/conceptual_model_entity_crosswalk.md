@@ -1,16 +1,14 @@
-# Conceptual model entity crosswalk
+# Conceptual Model Entity Crosswalk
 
-This file documents how candidate conceptual data model entities relate to MIMIC-IV Demo source structures and to broad correspondences in existing MIMIC-IV on FHIR and MIMIC-IV Demo OMOP resources.
+This file documents how candidate conceptual data model entities relate to MIMIC-IV Demo source structures and to broad orientation points in existing MIMIC-IV on FHIR and MIMIC-IV Demo OMOP resources.
 
 The crosswalk is intended as a documentation-based orientation aid for conceptual modeling and stakeholder review. It is not a formal FHIR mapping, OMOP mapping, ETL specification, transformation rule, or conformance assessment.
 
-The external resources referenced here have different objectives from the conceptual data model developed in this study. MIMIC-IV on FHIR represents MIMIC-IV data using FHIR resources for interoperability-oriented use. MIMIC-IV Demo OMOP represents MIMIC-IV Demo data in the OMOP Common Data Model for standardized observational research and OHDSI tooling. In contrast, the conceptual data model developed here is intended as a stakeholder-reviewable representation of candidate source-data concepts, selected attributes, candidate identifiers or linking fields, and relationships.
-
-FHIR correspondences are based on the MIMIC-IV on FHIR resource and its published approximate table-to-profile mapping. OMOP correspondences are based on the MIMIC-IV Demo OMOP resource, the OHDSI/MIMIC ETL documentation, and the broad target-table structure of the OMOP Common Data Model.
+FHIR orientation points are based on the MIMIC-IV on FHIR resource and its published approximate table-to-profile mapping. OMOP orientation points are based on the MIMIC-IV Demo OMOP resource, the OHDSI/MIMIC ETL documentation, and the broad target-table structure of the OMOP Common Data Model.
 
 ## Crosswalk table
 
-| Conceptual data model entity | MIMIC-IV Demo source structure(s) | Conceptual role in this study | Broad MIMIC-IV on FHIR orientation | Broad MIMIC-IV Demo OMOP orientation | Notes |
+| Conceptual data model entity | MIMIC-IV Demo source structure(s) | Conceptual role in this study | Broad FHIR orientation point | OMOP orientation point | Notes |
 |---|---|---|---|---|---|
 | Patient | `patients` | Represents the individual whose clinical data appear across hospital-module structures. | `MimicPatient` / FHIR `Patient` | `person` | Patient-level linkage is represented primarily through `subject_id`. |
 | Hospital admission | `admissions` | Represents a hospital-level episode of care. | `MimicEncounter` / FHIR `Encounter` | `visit_occurrence` | Hospitalization-level linkage is represented primarily through `hadm_id`. |
@@ -42,4 +40,4 @@ Bennett, A., Wiedekopf, J., Ulrich, H., van Damme, P., Szul, P., Grimes, J., & J
 
 Kallfelz, M., Tsvetkova, A., Pollard, T., Kwong, M., Lipori, G., Huser, V., Osborn, J., Hao, S., & Williams, A. (2021). *MIMIC-IV demo data in the OMOP Common Data Model* (version 0.9). PhysioNet. https://doi.org/10.13026/p1f5-7x35
 
-OHDSI. (n.d.). *MIMIC to OMOP ETL*. GitHub. https://github.com/OHDSI/MIMIC
+OHDSI. (n.d.). MIMIC to OMOP ETL. GitHub. Retrieved May 12, 2026, from https://github.com/OHDSI/MIMIC
