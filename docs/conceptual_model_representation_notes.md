@@ -1,6 +1,6 @@
-# Conceptual Model Mapping
+# Conceptual Model Representation Notes
 
-This document records how selected MIMIC-IV Demo hospital-module tables were interpreted as candidate conceptual entities, supporting reference structures, or supporting detail structures during construction of the conceptual data model artifact. These mappings are intended to preserve traceability from inspected source structures to candidate conceptual model elements. They do not represent a formal OMOP, FHIR, or implementation-level mapping.
+This document records representation decisions used during construction of the conceptual data model artifact, including candidate conceptual entities, selected attributes, candidate identifiers or linking fields, supporting reference structures, supporting detail structures, and relationship notation. The notes are intended to preserve traceability between inspected MIMIC-IV Demo hospital-module source structures, intermediate mapping outputs, and the final conceptual model representation.
 
 | Conceptual model term | Meaning in the conceptual data model | Related MIMIC-IV Demo table(s) | Key or linking field(s) | Modeling note |
 |---|---|---|---|---|

@@ -54,8 +54,14 @@ sql/
 
 schema/        DBML schema representations
 
-docs/          Conceptual mapping and crosswalk documentation
+docs/
+  workflow.md
+  conceptual_entity_mapping.md
+  source_to_concept_attribute_dictionary.csv
+  conceptual_model_representation_notes.md
+  conceptual_model_entity_crosswalk.md
 
+  
 figures/       Draw.io files and figure artifacts
 
 output/        Local generated outputs; not tracked
