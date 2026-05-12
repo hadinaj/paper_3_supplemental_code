@@ -6,8 +6,6 @@ The mappings are intended for stakeholder review and methodological transparency
 
 | Source table | Conceptual entity or structure | Modeling role | Candidate identifier or linking field(s) | Notes |
 |---|---|---|---|---|
-| Source table | Conceptual entity or structure | Modeling role | Candidate identifier or linking field(s) | Notes |
-|---|---|---|---|---|
 | patients | Patient | candidate entity | subject_id | Patient-level source table. |
 | admissions | Hospital admission | candidate entity | hadm_id; subject_id | Admission-level source table. |
 | transfers | Care location event | candidate entity | transfer_id; hadm_id; subject_id | Physical location or unit transfer source table. |
