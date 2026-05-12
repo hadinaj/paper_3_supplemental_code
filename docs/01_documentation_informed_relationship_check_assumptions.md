@@ -45,11 +45,11 @@ The main relationship-assessment output evaluated 48 selected candidate relation
 
 | Relationship-check category | Count | Why included |
 |---|---:|---|
-| Patient-level linkage checks | **16** | Selected hospital-module source tables containing `subject_id` were checked against `patients.subject_id` when relevant to the conceptual model. |
+| Patient-level linkage checks | **15** | Selected hospital-module source tables containing `subject_id` were checked against `patients.subject_id` when relevant to the conceptual model. |
 | Admission-level linkage checks | **12** | Selected hospital-module source tables containing `hadm_id` were checked against `admissions.hadm_id` when relevant to admission-level context. |
 | Dictionary/reference checks | **4** | Code, item, or billing event tables were checked against documented dictionary/reference tables. |
 | Provider-reference checks | **6** | Provider-related columns were checked against `provider.provider_id` based on MIMIC-IV documentation on prefixed provider columns. |
-| Order, medication, and detail workflow checks | **10** | Selected documented or model-relevant workflow links were checked among `poe`, `poe_detail`, `prescriptions`, `pharmacy`, `emar`, and `emar_detail`. |
+| Order, medication, and detail workflow checks | **11** | Selected documented or model-relevant workflow links were checked among `poe`, `poe_detail`, `prescriptions`, `pharmacy`, `emar`, and `emar_detail`. |
 | **Total** | **48** | Selected candidate relationship checks used in the main relationship assessment. |
 
 ## Relationship to the SQL checks

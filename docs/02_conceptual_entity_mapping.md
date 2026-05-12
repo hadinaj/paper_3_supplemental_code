@@ -4,6 +4,15 @@ This document records how the MIMIC-IV Demo hospital-module source tables were i
 
 The mappings are intended for stakeholder review and methodological transparency. They do not represent finalized stakeholder-validated concepts or formal database constraints.
 
+## Modeling role definitions
+
+The `Modeling role` column records how each MIMIC-IV Demo hospital-module source table was interpreted during conceptual model construction.
+
+- **Candidate entity**: A source-derived clinical, administrative, workflow, or context concept represented as a candidate entity in the conceptual data model artifact. Candidate entities are reviewable and not stakeholder-validated concepts.
+- **Reference entity**: A dictionary, code-definition, item-definition, provider, or other reference structure used to interpret coded or identifier-based source records.
+- **Detail or workflow-specific structure**: A supporting source structure that records additional detail, operational workflow information, or EAV-style content linked to another source structure.
+- **Source structure retained for traceability**: A source structure documented in the mapping for transparency but not necessarily emphasized as a main candidate entity in the conceptual model representation.
+
 | Source table | Conceptual entity or structure | Modeling role | Candidate identifier or linking field(s) | Notes |
 |---|---|---|---|---|
 | patients | Patient | candidate entity | subject_id | Patient-level source table. |

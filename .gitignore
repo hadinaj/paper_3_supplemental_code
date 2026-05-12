@@ -75,3 +75,7 @@ tmp/
 # Secrets
 .env
 *.key
+
+__MACOSX/
+
+!docs/source_to_concept_attribute_dictionary.csv
