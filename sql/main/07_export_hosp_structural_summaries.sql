@@ -35,51 +35,6 @@ COPY (
 TO 'output/01_structural_summaries/01_hosp_table_column_inventory.csv'
 WITH (HEADER, DELIMITER ',');
 
--- Columns that appear in more than one hosp table
-COPY (
-    SELECT
-        column_name,
-        COUNT(DISTINCT table_name) AS number_of_tables,
-        string_agg(table_name, ', ' ORDER BY table_name) AS tables
-    FROM information_schema.columns
-    WHERE table_schema = 'hosp'
-    GROUP BY column_name
-    HAVING COUNT(DISTINCT table_name) > 1
-    ORDER BY number_of_tables DESC, column_name
-)
-TO 'output/01_structural_summaries/02_hosp_table_row_counts.csv'
-WITH (HEADER, DELIMITER ',');
-
--- Common identifier-like columns
-COPY (
-    SELECT
-        table_name,
-        ordinal_position,
-        column_name,
-        data_type
-    FROM information_schema.columns
-    WHERE table_schema = 'hosp'
-      AND (
-          column_name LIKE '%id'
-          OR column_name LIKE '%_id'
-          OR column_name IN (
-              'subject_id',
-              'hadm_id',
-              'icd_code',
-              'icd_version',
-              'itemid',
-              'poe_id',
-              'pharmacy_id',
-              'emar_id',
-              'provider_id',
-              'hcpcs_cd'
-          )
-      )
-    ORDER BY column_name, table_name, ordinal_position
-)
-TO 'output/01_structural_summaries/03_hosp_identifier_like_columns.csv'
-WITH (HEADER, DELIMITER ',');
-
 -- Row counts for all loaded hospital-module tables
 COPY (
     SELECT 'admissions' AS table_name, COUNT(*) AS row_count FROM hosp.admissions
@@ -126,6 +81,52 @@ COPY (
     UNION ALL
     SELECT 'transfers', COUNT(*) FROM hosp.transfers
     ORDER BY table_name
+)
+TO 'output/01_structural_summaries/02_hosp_table_row_counts.csv'
+WITH (HEADER, DELIMITER ',');
+
+-- Common identifier-like columns
+COPY (
+    SELECT
+        table_name,
+        ordinal_position,
+        column_name,
+        data_type
+    FROM information_schema.columns
+    WHERE table_schema = 'hosp'
+      AND (
+          column_name LIKE '%id'
+          OR column_name LIKE '%_id'
+          OR column_name IN (
+              'subject_id',
+              'hadm_id',
+              'icd_code',
+              'icd_version',
+              'itemid',
+              'poe_id',
+              'pharmacy_id',
+              'emar_id',
+              'provider_id',
+              'hcpcs_cd'
+          )
+      )
+    ORDER BY column_name, table_name, ordinal_position
+)
+TO 'output/01_structural_summaries/03_hosp_identifier_like_columns.csv'
+WITH (HEADER, DELIMITER ',');
+
+
+-- Columns that appear in more than one hosp table
+COPY (
+    SELECT
+        column_name,
+        COUNT(DISTINCT table_name) AS number_of_tables,
+        string_agg(table_name, ', ' ORDER BY table_name) AS tables
+    FROM information_schema.columns
+    WHERE table_schema = 'hosp'
+    GROUP BY column_name
+    HAVING COUNT(DISTINCT table_name) > 1
+    ORDER BY number_of_tables DESC, column_name
 )
 TO 'output/01_structural_summaries/04_hosp_shared_columns.csv'
 WITH (HEADER, DELIMITER ',');
