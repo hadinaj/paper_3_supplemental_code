@@ -1,29 +1,37 @@
 -- 09_generate_hosp_inferred_relationships_dbml.sql
--- Generates DBML components for a hospital-module schema visualization with inferred relationships.
+-- Generates a relationship-enhanced DBML representation for the MIMIC-IV Demo hospital module.
 --
 -- Purpose:
--- This script creates DBML output for a relationship-enhanced schema representation
--- of the MIMIC-IV Demo hospital module. The relationship lines include conservative
--- inferred relationships supported by join-based match checks with zero unmatched
--- source rows in 08_export_hosp_candidate_relationship_checks.sql.
+-- This script creates a source-oriented DBML schema representation that includes
+-- the inspected hospital-module tables and selected conservative inferred relationships.
+-- Relationship lines are generated from the candidate relationship-assessment output
+-- produced by 08_export_hosp_candidate_relationship_checks.sql.
 --
--- Input:
--- DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql.
+-- The relationship-enhanced DBML includes only relationships classified as
+-- complete_conservative_inferred_relationship in the selected join-based checks.
+-- Relationships affected by null values in evaluated linking columns or unmatched
+-- non-null source values are retained in the relationship-assessment output, but are
+-- not added as DBML Ref lines here.
 --
--- Outputs:
---   - output/hosp_inferred_schema_tables_part.dbml
---   - output/hosp_inferred_schema_relationships_part.dbml
+-- Inputs:
+--   - DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql
+--   - output/relationship_assessments/hosp_candidate_relationship_checks.csv,
+--     created by 08_export_hosp_candidate_relationship_checks.sql
+--
+-- Output:
+--   - output/schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
 --
 -- Note:
 -- The generated relationships are inferred modeling relationships for schema
 -- representation. They should not be interpreted as formally declared database
--- constraints in the source files.
+-- constraints, primary-key/foreign-key constraints, or exhaustive relationship
+-- discovery results.
 
 COPY (
-    SELECT dbml_line
-    FROM (
-        -- Tables
+    WITH table_lines AS (
+        -- Opening table lines
         SELECT
+            1 AS section_order,
             table_name,
             0 AS sort_order,
             0 AS ordinal_position,
@@ -33,8 +41,9 @@ COPY (
 
         UNION ALL
 
-        -- Columns
+        -- Column lines
         SELECT
+            1 AS section_order,
             table_name,
             1 AS sort_order,
             ordinal_position,
@@ -53,59 +62,65 @@ COPY (
 
         UNION ALL
 
-        -- Closing braces
+        -- Closing table lines
         SELECT
+            1 AS section_order,
             table_name,
             2 AS sort_order,
             9999 AS ordinal_position,
             '}' AS dbml_line
         FROM information_schema.tables
         WHERE table_schema = 'hosp'
+    ),
+
+    relationship_lines AS (
+    SELECT
+        2 AS section_order,
+        candidate_relationship AS table_name,
+        row_number() OVER (ORDER BY candidate_relationship) AS sort_order,
+        0 AS ordinal_position,
+        'Ref: ' ||
+        replace(
+            replace(candidate_relationship, ' -> ', ' > '),
+            ' → ',
+            ' > '
+        ) AS dbml_line
+    FROM read_csv_auto('output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv')
+    WHERE relationship_assessment = 'complete_conservative_inferred_relationship'
+    ), 
+
+    combined_lines AS (
+        SELECT
+            section_order,
+            table_name,
+            sort_order,
+            ordinal_position,
+            dbml_line
+        FROM table_lines
+
+        UNION ALL
+
+        SELECT
+            2 AS section_order,
+            '' AS table_name,
+            0 AS sort_order,
+            0 AS ordinal_position,
+            '' AS dbml_line
+
+        UNION ALL
+
+        SELECT
+            section_order,
+            table_name,
+            sort_order,
+            ordinal_position,
+            dbml_line
+        FROM relationship_lines
     )
-    ORDER BY table_name, sort_order, ordinal_position
+
+    SELECT dbml_line
+    FROM combined_lines
+    ORDER BY section_order, table_name, sort_order, ordinal_position
 )
-TO 'output/hosp_inferred_schema_tables_part.dbml'
-WITH (FORMAT CSV, HEADER false, DELIMITER '|', QUOTE '');
-
-COPY (
-    SELECT ref_line
-    FROM (
-        SELECT '' AS ref_line, 0 AS sort_order
-
-        UNION ALL SELECT 'Ref: admissions.subject_id > patients.subject_id', 1
-
-        UNION ALL SELECT 'Ref: diagnoses_icd.subject_id > patients.subject_id', 2
-        UNION ALL SELECT 'Ref: diagnoses_icd.hadm_id > admissions.hadm_id', 3
-        UNION ALL SELECT 'Ref: diagnoses_icd.(icd_code, icd_version) > d_icd_diagnoses.(icd_code, icd_version)', 4
-
-        UNION ALL SELECT 'Ref: procedures_icd.subject_id > patients.subject_id', 5
-        UNION ALL SELECT 'Ref: procedures_icd.hadm_id > admissions.hadm_id', 6
-        UNION ALL SELECT 'Ref: procedures_icd.(icd_code, icd_version) > d_icd_procedures.(icd_code, icd_version)', 7
-
-        UNION ALL SELECT 'Ref: labevents.subject_id > patients.subject_id', 8
-        UNION ALL SELECT 'Ref: labevents.itemid > d_labitems.itemid', 9
-
-        UNION ALL SELECT 'Ref: transfers.subject_id > patients.subject_id', 10
-
-        UNION ALL SELECT 'Ref: services.subject_id > patients.subject_id', 11
-        UNION ALL SELECT 'Ref: services.hadm_id > admissions.hadm_id', 12
-
-        UNION ALL SELECT 'Ref: drgcodes.subject_id > patients.subject_id', 13
-        UNION ALL SELECT 'Ref: drgcodes.hadm_id > admissions.hadm_id', 14
-
-        UNION ALL SELECT 'Ref: prescriptions.subject_id > patients.subject_id', 15
-        UNION ALL SELECT 'Ref: prescriptions.hadm_id > admissions.hadm_id', 16
-
-        UNION ALL SELECT 'Ref: pharmacy.subject_id > patients.subject_id', 17
-        UNION ALL SELECT 'Ref: pharmacy.hadm_id > admissions.hadm_id', 18
-
-        UNION ALL SELECT 'Ref: poe.subject_id > patients.subject_id', 19
-        UNION ALL SELECT 'Ref: poe.hadm_id > admissions.hadm_id', 20
-
-        UNION ALL SELECT 'Ref: hcpcsevents.subject_id > patients.subject_id', 21
-        UNION ALL SELECT 'Ref: hcpcsevents.hadm_id > admissions.hadm_id', 22
-    )
-    ORDER BY sort_order
-)
-TO 'output/hosp_inferred_schema_relationships_part.dbml'
+TO 'output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml'
 WITH (FORMAT CSV, HEADER false, DELIMITER '|', QUOTE '');

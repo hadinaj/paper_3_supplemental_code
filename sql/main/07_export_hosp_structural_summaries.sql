@@ -1,4 +1,4 @@
--- 07_export_hosp_structural_summaries.sql
+-- 07_export_hosp_identifier_inventory.sql
 -- Exports table/column and identifier inventories for the MIMIC-IV Demo hospital module.
 --
 -- Purpose:

@@ -22,7 +22,7 @@
 -- DuckDB tables in the hosp schema, created by sql/main/05_load_all_hosp_tables.sql.
 --
 -- Output:
---   - output/relationship_assessments/hosp_candidate_relationship_checks.csv
+--   - output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv
 
 COPY (
     WITH relationship_checks AS (
@@ -711,5 +711,5 @@ COPY (
         END AS relationship_assessment
     FROM relationship_checks
 )
-TO 'output/relationship_assessments/hosp_candidate_relationship_checks.csv'
+TO 'output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv'
 WITH (HEADER, DELIMITER ',');
