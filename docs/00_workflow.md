@@ -1,187 +1,304 @@
-# MIMIC-IV Demo DuckDB Workflow
+# Reproducible workflow
 
-This document describes the local SQL/DuckDB workflow used for the Step 0 demonstration of conceptual data modeling using the MIMIC-IV Demo dataset.
+This document describes how to reproduce the technical workflow for the MIMIC-IV Demo hospital-module application used in the manuscript:
 
+**Conceptual Data Modeling of EHR-Derived Clinical Data: A Stakeholder-Oriented Methodological Framework**
 
-## 1. Repository structure
+The workflow supports the reproducible technical parts of the framework: identifying input data structures and documentation, inspecting source data structures, and generating outputs used for conceptual data model construction.
+
+Stakeholder review, refinement, and organizational use are part of the proposed framework, but they are not empirically implemented in this repository.
+
+## 1. Before running
+
+Run commands from the repository root.
+
+Example:
+
+```bash
+cd /Users/jelenahadina/Documents/GitHub/paper_3_supplemental_code
+pwd
+```
+
+The `pwd` command should show the repository folder. The `ls` command should show folders such as:
 
 ```text
-paper_3_supplemental_code/
-  data/
-    raw/
-      mimic-iv-clinical-database-demo-2.2/
-  sql/
-    00_load_core_tables.sql
-    01_schema_inspection.sql
-    02_relationship_checks.sql
-    03_coding_tables.sql
-    04_export_summary_outputs.sql
-    05_load_all_hosp_tables.sql
-    06_generate_hosp_master_schema_dbml.sql
-    07_export_hosp_identifier_inventory.sql
-    08_export_hosp_candidate_relationship_checks.sql
-    09_generate_hosp_inferred_relationships_dbml.sql
-  output/
-  docs/
-  ```
+docs
+sql
+scripts
+```
 
-The `data/`, `output/`, and local DuckDB database files are not committed to GitHub.
+## 2. Required data
 
-## 2. Data location
+The MIMIC-IV Demo data are not included in this repository.
 
-The MIMIC-IV Demo dataset should be placed locally at:
+Place the MIMIC-IV Demo hospital-module files locally under:
 
 ```text
-data/raw/mimic-iv-clinical-database-demo-2.2/
+data/raw/mimic-iv-clinical-database-demo-2.2/hosp/
 ```
 
-The original compressed `.csv.gz` files should be kept in their original `hosp/` and `icu/` folders.
-
-## 3. Create or open the DuckDB database
-
-From the repository root, run:
-
-```bash
-duckdb mimic_demo.duckdb
-```
-
-Then exit DuckDB with:
-
-```sql
-.quit
-```
-
-## 4. Optional initial core-table loading check
-
-From the repository root, run:
-
-```bash
-duckdb mimic_demo.duckdb < sql/00_load_core_tables.sql
-```
-
-This script loads a small set of selected tables used to test the local DuckDB setup and demonstrate the basic structural exploration workflow on a manageable subset of MIMIC-IV Demo tables. The main hospital-module workflow begins with `05_load_all_hosp_tables.sql`.
-
-## 5. Optional core-table schema inspection
-
-```bash
-duckdb mimic_demo.duckdb < sql/01_schema_inspection.sql
-```
-
-This script inspects the selected core tables loaded by `00_load_core_tables.sql`. It reports loaded tables, row counts, column structures, candidate identifier checks, and selected relationship checks. The main hospital-module inventory used for the Step 0 demonstration is generated later by `07_export_hosp_identifier_inventory.sql`.
-
-## 6. Optional core-table relationship checks
-
-```bash
-duckdb mimic_demo.duckdb < sql/02_relationship_checks.sql
-```
-
-This script performs selected relationship checks among the core tables loaded by `00_load_core_tables.sql`. Each query compares source rows with rows that match a proposed reference table using a join-based match check. The main hospital-module candidate relationship checks used for the Step 0 demonstration are generated later by `08_export_hosp_candidate_relationship_checks.sql`.
-
-## 7. Optional coding and dictionary table inspection
-
-```bash
-duckdb mimic_demo.duckdb < sql/03_coding_tables.sql
-```
-
-This script provides an optional coding and dictionary table inspection step. Although it is demonstrated using ICD diagnosis codes and laboratory item identifiers in MIMIC-IV Demo, the same type of inspection may be useful for other EHR-derived datasets that contain coded clinical fields and local or standardized dictionary tables.
-
-## 8. Optional core-table summary exports
-
-From the repository root, run:
-
-```bash
-duckdb mimic_demo.duckdb < sql/04_export_summary_outputs.sql
-```
-
-This script exports selected row counts, relationship checks, diagnosis code summaries, and laboratory item summaries from the optional core-table workflow. The exported files are prefixed with core_ to distinguish them from the main hospital-module outputs. These outputs provide a small reproducible example of preparatory structural exploration. The main hospital-module outputs used for the Step 0 demonstration are generated later by `07_export_hosp_identifier_inventory.sql`, `08_export_hosp_candidate_relationship_checks.sql`, and `09_generate_hosp_inferred_relationships_dbml.sql`.
-
-## 9. Load all hospital-module tables
-
-From the repository root, run:
-
-```bash
-duckdb mimic_demo.duckdb < sql/05_load_all_hosp_tables.sql
-```
-
-This script loads all MIMIC-IV Demo hospital-module (`hosp`) tables into the local DuckDB database. This is the starting point for the main Step 0 preparatory structural exploration workflow reported in the manuscript. The raw `.csv.gz` files are not modified; DuckDB creates local tables in the `hosp` schema for subsequent table inventory, identifier assessment, candidate relationship checks, and schema visualization.
-
-
-## 10. Generate hospital-module table and column DBML
-
-From the repository root, run:
-
-```bash
-duckdb mimic_demo.duckdb < sql/06_generate_hosp_master_schema_dbml.sql
-```
-
-This script generates a DBML representation of the hospital-module table and column structure. The output can be pasted into dbdiagram.io to create a preliminary schema visualization. This version includes tables and columns only; inferred relationships are evaluated and added in later steps.
-
-Output:
+The SQL loading script expects compressed CSV files such as:
 
 ```text
-output/hosp_master_schema_tables_only.dbml
+admissions.csv.gz
+patients.csv.gz
+transfers.csv.gz
+services.csv.gz
+diagnoses_icd.csv.gz
+procedures_icd.csv.gz
+labevents.csv.gz
+microbiologyevents.csv.gz
+poe.csv.gz
+poe_detail.csv.gz
+prescriptions.csv.gz
+pharmacy.csv.gz
+emar.csv.gz
+emar_detail.csv.gz
+provider.csv.gz
+drgcodes.csv.gz
+hcpcsevents.csv.gz
+d_hcpcs.csv.gz
+d_icd_diagnoses.csv.gz
+d_icd_procedures.csv.gz
+d_labitems.csv.gz
+omr.csv.gz
 ```
 
+Raw data files are ignored by git and should not be committed.
 
-## 11. Export hospital-module table, column, and identifier inventories
+## 3. Software requirement
 
-From the repository root, run:
+The workflow uses the DuckDB command-line interface.
+
+Check that DuckDB is available:
 
 ```bash
-duckdb mimic_demo.duckdb < sql/07_export_hosp_identifier_inventory.sql
+duckdb --version
 ```
 
-This script exports the main table and column inventory for the hospital module, a list of columns shared across multiple tables, and a list of identifier-like fields. These outputs support the Step 0 preparatory work outputs described in the manuscript: table and column inventory and candidate identifier summary. Shared column names and identifier-like fields are used to propose candidate relationships, but they are not interpreted as formal database constraints.
+## 4. Generated output folders
 
-Outputs:
+Generated outputs are written under `output/`. The `output/` folder is ignored by git.
 
-```text
-output/hosp_column_inventory.csv
-output/hosp_shared_columns.csv
-output/hosp_identifier_columns.csv
-```
-
-## 12. Export hospital-module candidate relationship checks
-
-From the repository root, run:
+Create the output folders before running the workflow:
 
 ```bash
-duckdb mimic_demo.duckdb < sql/08_export_hosp_candidate_relationship_checks.sql
+mkdir -p output/01_structural_summaries
+mkdir -p output/02_relationship_assessments
+mkdir -p output/03_schema_representations
 ```
 
-This script evaluates selected candidate relationships among hospital-module tables using join-based match checks. Candidate relationships are proposed from documented identifiers and shared identifier-like fields, but are not interpreted as formally declared database constraints. The output reports source rows, matched rows, and unmatched rows for each candidate relationship. Relationships with zero unmatched rows can be treated as conservative inferred relationships for preliminary schema visualization, while relationships with unmatched rows should be treated as partial or context-dependent links.
-
-Output:
-
-```text
-output/hosp_candidate_relationship_checks.csv
-```
-
-
-## 13. Generate hospital-module inferred relationship DBML
-
-From the repository root, run:
+If you want to regenerate outputs from scratch, first remove existing generated outputs:
 
 ```bash
-duckdb mimic_demo.duckdb < sql/09_generate_hosp_inferred_relationships_dbml.sql
+rm -rf output/*
+
+mkdir -p output/01_structural_summaries
+mkdir -p output/02_relationship_assessments
+mkdir -p output/03_schema_representations
 ```
 
-This script generates DBML components for a preliminary hospital-module schema visualization with inferred relationships. The relationship lines include only conservative inferred relationships supported by join-based match checks with zero unmatched source rows. These relationships are modeling assumptions for preliminary schema visualization and should not be interpreted as formally declared database constraints.
+## 5. Main workflow scripts
 
-Outputs:
+Run the scripts from the repository root.
+
+For a full run, including loading the hospital-module tables into DuckDB:
+
+```bash
+duckdb mimiciv_demo.duckdb < sql/main/05_load_all_hosp_tables.sql
+duckdb mimiciv_demo.duckdb < sql/main/06_generate_hosp_master_schema_dbml.sql
+duckdb mimiciv_demo.duckdb < sql/main/07_export_hosp_structural_summaries.sql
+duckdb mimiciv_demo.duckdb < sql/main/08_export_hosp_candidate_relationship_checks.sql
+duckdb mimiciv_demo.duckdb < sql/main/09_generate_hosp_inferred_relationships_dbml.sql
+```
+
+If the DuckDB database already exists and the hospital-module tables have already been loaded, scripts `06` through `09` can be rerun to regenerate outputs:
+
+```bash
+duckdb mimiciv_demo.duckdb < sql/main/06_generate_hosp_master_schema_dbml.sql
+duckdb mimiciv_demo.duckdb < sql/main/07_export_hosp_structural_summaries.sql
+duckdb mimiciv_demo.duckdb < sql/main/08_export_hosp_candidate_relationship_checks.sql
+duckdb mimiciv_demo.duckdb < sql/main/09_generate_hosp_inferred_relationships_dbml.sql
+```
+
+## 6. What each main script does
 
 ```text
-output/hosp_inferred_schema_tables_part.dbml
-output/hosp_inferred_schema_relationships_part.dbml
+sql/main/05_load_all_hosp_tables.sql
 ```
 
-To create the visualization, paste the contents of `hosp_inferred_schema_tables_part.dbml` into dbdiagram.io first, then paste the contents of `hosp_inferred_schema_relationships_part.dbml` below it.
+Loads the selected MIMIC-IV Demo hospital-module source tables into a local DuckDB database under the `hosp` schema.
 
+```text
+sql/main/06_generate_hosp_master_schema_dbml.sql
+```
 
-## 14. Notes
+Generates a tables-only Database Markup Language (DBML) representation of the inspected hospital-module tables and columns.
 
-This workflow uses only local files and open-source software. DuckDB can read the compressed `.csv.gz` files directly, so the raw MIMIC-IV Demo files do not need to be uncompressed.
+```text
+sql/main/07_export_hosp_structural_summaries.sql
+```
 
-The workflow supports the Step 0 preparatory structural exploration process described in the manuscript. It is intended to generate preparatory work outputs, including table and column inventories, candidate identifier summaries, candidate relationship checks, and preliminary schema visualizations.
+Generates structural summaries, including the table and column inventory, row-count summary, identifier-like column summary, and shared-column summary.
 
-Candidate relationships generated by this workflow should be interpreted as inferred modeling relationships rather than formally declared database constraints. Relationships with unmatched rows in the join-based match checks should be treated as partial or context-dependent candidate links.
+```text
+sql/main/08_export_hosp_candidate_relationship_checks.sql
+```
+
+Evaluates selected candidate relationship checks using join-based comparisons.
+
+```text
+sql/main/09_generate_hosp_inferred_relationships_dbml.sql
+```
+
+Generates a relationship-enhanced DBML representation using complete conservative inferred relationships from the selected relationship checks.
+
+## 7. Expected generated outputs
+
+After running the workflow, the generated outputs should be:
+
+```text
+output/01_structural_summaries/01_hosp_table_column_inventory.csv
+output/01_structural_summaries/02_hosp_table_row_counts.csv
+output/01_structural_summaries/03_hosp_identifier_like_columns.csv
+output/01_structural_summaries/04_hosp_shared_columns.csv
+output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv
+output/03_schema_representations/01_hosp_tables_only_dbml_representation.dbml
+output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
+```
+
+Check generated files:
+
+```bash
+find output -maxdepth 2 -type f | sort
+```
+
+## 8. Output groups and manuscript wording
+
+| Output folder | Manuscript wording |
+|---|---|
+| `output/01_structural_summaries/` | Structural inventories and summaries |
+| `output/02_relationship_assessments/` | Selected relationship-assessment outputs |
+| `output/03_schema_representations/` | Source-structure schema representations |
+
+The DBML outputs correspond to:
+
+| Filename | Manuscript wording |
+|---|---|
+| `01_hosp_tables_only_dbml_representation.dbml` | Tables-only DBML representation |
+| `02_hosp_relationship_enhanced_dbml_representation.dbml` | Relationship-enhanced DBML representation |
+| Both DBML files together | Source-structure schema representations |
+
+## 9. Sanity checks
+
+Check that both DBML representations include all 22 hospital-module tables:
+
+```bash
+grep -c "^Table " output/03_schema_representations/01_hosp_tables_only_dbml_representation.dbml
+grep -c "^Table " output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
+```
+
+Expected output:
+
+```text
+22
+22
+```
+
+Check that the relationship-enhanced DBML representation contains 33 complete conservative inferred relationships:
+
+```bash
+grep -c "^Ref:" output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
+```
+
+Expected output:
+
+```text
+33
+```
+
+Check that the selected candidate relationship-check output contains 48 rows, excluding the header:
+
+```bash
+tail -n +2 output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv | wc -l
+```
+
+Expected output:
+
+```text
+48
+```
+
+Check that structural summary files are not swapped:
+
+```bash
+head output/01_structural_summaries/02_hosp_table_row_counts.csv
+head output/01_structural_summaries/04_hosp_shared_columns.csv
+```
+
+The row-count file should show table names and row counts. The shared-column file should show column names that appear in more than one table.
+
+## 10. Interpretation of relationship outputs
+
+The candidate relationship checks are selected, documentation- and structure-informed assessments. They are not exhaustive relationship discovery results.
+
+The relationship-check output separates:
+
+- source rows with non-null values in the evaluated linking column;
+- source rows with null values in the evaluated linking column;
+- matched source rows;
+- unmatched non-null source rows.
+
+This distinction is used to separate absent linkage information from non-null values that fail to match the proposed target or reference structure.
+
+The relationship-enhanced DBML representation includes only relationships classified as complete conservative inferred relationships. Relationships affected by null values in evaluated linking columns or unmatched non-null source values are retained in the relationship-assessment output for contextual interpretation and later review rather than added as straightforward DBML relationship lines.
+
+The DBML files should not be interpreted as formal database implementation schemas, formally declared primary-key/foreign-key constraints, or stakeholder-validated conceptual models.
+
+## 11. Optional exploratory script
+
+The repository also includes:
+
+```text
+scripts/exploratory_shared_column_relationship_discovery.py
+```
+
+This optional script performs a broader same-name column overlap scan. It is not part of the main manuscript workflow. It can be used to illustrate why documentation-informed selection and conceptual interpretation are needed before treating shared column names as meaningful relationships.
+
+## 12. Troubleshooting
+
+If a script cannot find the raw MIMIC-IV Demo files, check that the files are placed under:
+
+```text
+data/raw/mimic-iv-clinical-database-demo-2.2/hosp/
+```
+
+If a script cannot write output files, recreate the output folders:
+
+```bash
+mkdir -p output/01_structural_summaries
+mkdir -p output/02_relationship_assessments
+mkdir -p output/03_schema_representations
+```
+
+If the terminal says `duckdb: command not found`, DuckDB is not available from the command line.
+
+If the terminal says a SQL script cannot be found, check that you are running commands from the repository root:
+
+```bash
+pwd
+ls sql/main
+```
+
+## 13. Git notes
+
+The following are local/generated and should not be committed:
+
+```text
+data/
+output/
+*.duckdb
+*.duckdb.wal
+```
+
+The generated outputs are reproducible by running the workflow.
