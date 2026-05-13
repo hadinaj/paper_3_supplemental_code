@@ -6,7 +6,7 @@ The assumptions below were derived from MIMIC-IV documentation and used to orien
 
 ## Documentation-informed assumptions
 
-| Documentation-informed assumption used before relationship checks | Exact MIMIC-IV quote to verify | Candidate relationship checks affected |
+| Documentation-informed assumption used before relationship checks | MIMIC-IV documentation support* | Candidate relationship checks affected |
 |---|---|---|
 | Use the `hosp` module as the hospital-wide EHR-derived source scope. | “hospital (`hosp`) module contains data acquired from the hospital wide electronic health record” ([MIMIC](https://mimic.mit.edu/docs/IV/about/schema-overview.html)) | Selection of hosp tables; exclusion of ICU-specific checks. |
 | Treat `subject_id` as the patient-level identifier. | “`subject_id` is a unique identifier which specifies an individual patient.” ([MIMIC](https://mimic.mit.edu/docs/IV/about/schema-overview.html)) | Source table `subject_id` → `patients.subject_id` checks. |
@@ -39,6 +39,8 @@ The assumptions below were derived from MIMIC-IV documentation and used to orien
 | Treat DRG records as hospitalization-related reimbursement/billing structures. | “DRGs are used by the hospital to obtain reimbursement” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/drgcodes.html)) | `drgcodes.subject_id` → `patients.subject_id`; `drgcodes.hadm_id` → `admissions.hadm_id`. |
 | Treat OMR as patient-level/miscellaneous EHR context, not admission-linked by default. | “stores miscellaneous information documented in the electronic health record” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/omr.html)) | `omr.subject_id` → `patients.subject_id`; no direct `omr.hadm_id` → `admissions.hadm_id` check. |
 
+\* Row-level links in the excerpt column point to the relevant MIMIC-IV documentation pages used to support each documentation-informed assumption.
+
 ## Selection categories for candidate relationship checks
 
 The main relationship-assessment output evaluated 48 selected candidate relationship checks. These checks were selected using MIMIC-IV documentation, structural inspection outputs, and conceptual-model relevance. They were not intended to exhaustively enumerate all possible joins in the MIMIC-IV Demo hospital module.
@@ -59,3 +61,9 @@ These documentation-informed assumptions helped define candidate reference struc
 The SQL relationship checks evaluated selected candidate links empirically in the MIMIC-IV Demo data. The checks assessed whether non-null source values matched the proposed target or reference structure and whether each selected link was complete, complete when present but not always populated, or partial/context-dependent.
 
 The selected checks should be interpreted as a curated, documentation- and structure-informed relationship assessment set. They should not be interpreted as an exhaustive discovery of all possible joins or as formal primary-key/foreign-key constraints.
+
+## References
+
+MIMIC-IV documentation. MIT Laboratory for Computational Physiology. Available at: https://mimic.mit.edu/docs/IV/
+
+Johnson, A. E. W., Stone, D. J., Celi, L. A., & Pollard, T. J. (2018). The MIMIC Code Repository: Enabling reproducibility in critical care research. *Journal of the American Medical Informatics Association, 25*(1), 32–39. https://doi.org/10.1093/jamia/ocx084
