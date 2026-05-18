@@ -3,7 +3,7 @@
 --
 -- Purpose:
 -- This script creates a source-oriented DBML schema representation that includes
--- the inspected hospital-module tables and selected conservative inferred relationships.
+-- the inspected hospital-module tables and selected fully complete inferred relationships.
 -- Relationship lines are generated from the candidate relationship-assessment output
 -- produced by 08_export_hosp_candidate_relationship_checks.sql.
 --
@@ -86,7 +86,7 @@ COPY (
             ' > '
         ) AS dbml_line
     FROM read_csv_auto('output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv')
-    WHERE relationship_assessment = 'complete_conservative_inferred_relationship'
+    WHERE relationship_assessment = 'fully_complete_inferred_relationship'
     ), 
 
     combined_lines AS (

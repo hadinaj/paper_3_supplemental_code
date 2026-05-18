@@ -701,13 +701,13 @@ COPY (
         CASE
             WHEN unmatched_non_null_rows = 0
                  AND source_null_link_rows = 0
-                THEN 'complete_conservative_inferred_relationship'
+                THEN 'fully_complete_inferred_relationship'
 
             WHEN unmatched_non_null_rows = 0
                  AND source_null_link_rows > 0
-                THEN 'complete_when_link_present_with_null_source_links'
+                THEN 'partially_complete_inferred_relationship'
 
-            ELSE 'partial_or_context_dependent_candidate_link'
+            ELSE 'context-dependent_candidate_relationship'
         END AS relationship_assessment
     FROM relationship_checks
 )
