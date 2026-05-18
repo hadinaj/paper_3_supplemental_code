@@ -2,7 +2,7 @@
 
 This document records representation decisions used to translate the supporting mapping files, relationship-assessment outputs, and schema representations into conceptual model views for the MIMIC-IV Demo hospital-module application.
 
-The notes are intended to support traceability between the repository documentation and the conceptual model artifact. They explain how candidate entities, reference structures, detail/workflow-specific structures, selected source-derived attributes, candidate identifiers and linking fields, conceptual attribute groups, and relationship-assessment categories are represented across the model views.
+The notes are intended to support traceability between the repository documentation and the conceptual model artifact. They explain how candidate entities, reference structures, detail/workflow-specific structures, selected source-derived attributes, candidate identifiers and linking fields, conceptual attribute groups, and relationship-assessment categories, including fully complete inferred, partially complete inferred, and context-dependent candidate relationships, are represented across the model views.
 
 The model views are entity–relationship-style conceptual representations. They are reviewable and revisable artifacts, not implementation schemas, complete relationship-discovery outputs, declared primary-key/foreign-key specifications, or stakeholder-validated models.
 
@@ -26,8 +26,9 @@ The model views are entity–relationship-style conceptual representations. They
 | Candidate identifier or linking field | Shown where needed for traceability. Candidate identifiers and linking fields are not necessarily formally declared primary keys or foreign keys. | `03_source_to_concept_attribute_dictionary.csv`; relationship-assessment outputs |
 | Selected source-derived attribute | Represented directly, grouped, or retained in supporting documentation depending on its role in the initial mapping. Not all source columns are shown in every model view. | `03_source_to_concept_attribute_dictionary.csv` |
 | Conceptual attribute group | Related source columns are organized under proposed initial group labels to reduce visual clutter while preserving source-column traceability. These groups can be regrouped, renamed, or revised during later modeling or stakeholder-review steps. | `03_source_to_concept_attribute_dictionary.csv` |
-| Solid relationship line | Used for conservative inferred relationships according to the relationship-assessment logic. | Relationship-assessment outputs |
-| Reviewable/non-solid relationship line | Used for candidate relationships requiring contextual interpretation, including links affected by null source-link patterns or unmatched non-null source values. | Relationship-assessment outputs |
+| Fully complete inferred relationship | Shown as a solid relationship line when the evaluated link is fully supported by the relationship-assessment counts. | Relationship-assessment outputs |
+| Partially complete inferred relationship | Shown as an inferred relationship with caution or visual distinction when the evaluated link is supported where present but not populated for all source rows. | Relationship-assessment outputs |
+| Context-dependent candidate relationship | Shown as a reviewable/non-solid relationship line when the evaluated link requires contextual interpretation, including cases with unmatched non-null source values. | Relationship-assessment outputs |
 | Conceptual attribute group view | Uses rectangles for candidate entities or structures and ovals for conceptual attribute groups. This view illustrates how source-column detail can be organized without overloading the main relationship-focused view. | `03_source_to_concept_attribute_dictionary.csv` |
 
 ## Interpretation limits
