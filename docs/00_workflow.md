@@ -4,9 +4,9 @@ This document describes how to reproduce the technical workflow for the MIMIC-IV
 
 **Conceptual Data Modeling of EHR-Derived Clinical Data: A Stakeholder-Oriented Methodological Framework**
 
-The workflow supports the reproducible technical parts of the framework: identifying input data structures and documentation, inspecting source data structures, and generating outputs used for conceptual data model construction.
+The workflow supports the reproducible technical parts of the framework: identifying input data structures and documentation, inspecting source data structures, and generating outputs used for conceptual data model artifact construction.
 
-Stakeholder review, refinement, and organizational use are part of the proposed framework, but they are not empirically implemented in this repository.
+Stakeholder review, refinement, and adaptation are part of the proposed framework, but they are not empirically implemented in this repository.
 
 ## 1. Before running
 
@@ -151,7 +151,7 @@ Evaluates selected candidate relationship checks using join-based comparisons.
 sql/main/09_generate_hosp_inferred_relationships_dbml.sql
 ```
 
-Generates a relationship-enhanced DBML representation using complete conservative inferred relationships from the selected relationship checks.
+Generates a relationship-enhanced DBML representation using fully complete inferred relationships from the selected relationship checks.
 
 ## 7. Expected generated outputs
 
@@ -173,21 +173,33 @@ Check generated files:
 find output -maxdepth 2 -type f | sort
 ```
 
-## 8. Output groups and manuscript wording
 
-| Output folder | Manuscript wording |
+## 8. Output groups and manuscript alignment
+
+The generated output folders correspond to the manuscript output groups as follows:
+
+| Output folder | Manuscript-aligned output group |
 |---|---|
 | `output/01_structural_summaries/` | Structural inventories and summaries |
-| `output/02_relationship_assessments/` | Selected relationship-assessment outputs |
-| `output/03_schema_representations/` | Source-structure schema representations |
+| `output/02_relationship_assessments/` | Relationship-assessment outputs |
+| `output/03_schema_representations/` | Source-oriented DBML schema representations |
 
 The DBML outputs correspond to:
 
-| Filename | Manuscript wording |
+| Filename | Manuscript-aligned wording |
 |---|---|
 | `01_hosp_tables_only_dbml_representation.dbml` | Tables-only DBML representation |
 | `02_hosp_relationship_enhanced_dbml_representation.dbml` | Relationship-enhanced DBML representation |
-| Both DBML files together | Source-structure schema representations |
+| Both DBML files together | Source-oriented DBML schema representations |
+
+The relationship-assessment output uses technical category labels. In the manuscript, these are reported using more readable relationship-category names:
+
+| Repository label | Manuscript-aligned label |
+|---|---|
+| `complete_conservative_inferred_relationship` | Fully complete inferred relationship |
+| `complete_when_link_present_with_null_source_links` | Partially complete inferred relationship |
+| `partial_or_context_dependent_candidate_link` | Context-dependent candidate relationship |
+
 
 ## 9. Sanity checks
 
@@ -205,7 +217,7 @@ Expected output:
 22
 ```
 
-Check that the relationship-enhanced DBML representation contains 33 complete conservative inferred relationships:
+Check that the relationship-enhanced DBML representation contains 33 relationships classified as fully_complete_inferred_relationship:
 
 ```bash
 grep -c "^Ref:" output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
@@ -251,7 +263,7 @@ The relationship-check output separates:
 
 This distinction is used to separate absent linkage information from non-null values that fail to match the proposed target or reference structure.
 
-The relationship-enhanced DBML representation includes only relationships classified as complete conservative inferred relationships. Relationships affected by null values in evaluated linking columns or unmatched non-null source values are retained in the relationship-assessment output for contextual interpretation and later review rather than added as straightforward DBML relationship lines.
+The relationship-enhanced DBML representation includes only relationships classified as fully_complete_inferred_relationship / fully complete inferred relationships. Relationships affected by null values in evaluated linking columns or unmatched non-null source values are retained in the relationship-assessment output for contextual interpretation and later review rather than added as straightforward DBML relationship lines.
 
 The DBML files should not be interpreted as formal database implementation schemas, formally declared primary-key/foreign-key constraints, or stakeholder-validated conceptual models.
 

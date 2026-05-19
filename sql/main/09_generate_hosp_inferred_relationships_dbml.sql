@@ -8,7 +8,7 @@
 -- produced by 08_export_hosp_candidate_relationship_checks.sql.
 --
 -- The relationship-enhanced DBML includes only relationships classified as
--- complete_conservative_inferred_relationship in the selected join-based checks.
+-- fully_complete_inferred_relationship in the selected join-based checks.
 -- Relationships affected by null values in evaluated linking columns or unmatched
 -- non-null source values are retained in the relationship-assessment output, but are
 -- not added as DBML Ref lines here.

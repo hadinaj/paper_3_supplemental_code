@@ -14,7 +14,7 @@
 -- reference structure. The output separates source rows with null linking values
 -- from non-null source rows that do not match the proposed reference structure.
 -- Candidate relationships with zero unmatched non-null source rows are treated
--- as conservative inferred relationships for schema representation. Candidate
+-- as fully complete inferred relationships for schema representation. Candidate
 -- relationships with unmatched non-null source rows are retained as partial or
 -- context-dependent candidate links requiring review.
 --
