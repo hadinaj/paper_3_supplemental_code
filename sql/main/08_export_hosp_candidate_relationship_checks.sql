@@ -13,10 +13,13 @@
 -- Each query compares source-table rows with rows that match a proposed
 -- reference structure. The output separates source rows with null linking values
 -- from non-null source rows that do not match the proposed reference structure.
--- Candidate relationships with zero unmatched non-null source rows are treated
--- as fully complete inferred relationships for schema representation. Candidate
--- relationships with unmatched non-null source rows are retained as partial or
--- context-dependent candidate links requiring review.
+-- Classification rule:
+--   - fully complete inferred relationship: zero unmatched non-null source rows
+--     and zero null linking rows;
+--   - partially complete inferred relationship: zero unmatched non-null source
+--     rows, but one or more null linking rows;
+--   - context-dependent candidate relationship: one or more unmatched non-null
+--     source rows; retained as a candidate link requiring review.
 --
 -- Input:
 -- DuckDB tables in the hosp schema, created by sql/main/05_load_all_hosp_tables.sql.
