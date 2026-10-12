@@ -76,6 +76,12 @@ Check that DuckDB is available:
 duckdb --version
 ```
 
+The optional exploratory script (section 11) additionally requires Python 3 with the `duckdb` package:
+
+```bash
+python3 -c "import duckdb; print(duckdb.__version__)"
+```
+
 ## 4. Generated output folders
 
 Generated outputs are written under `output/`. The `output/` folder is ignored by git.
@@ -167,12 +173,17 @@ output/03_schema_representations/01_hosp_tables_only_dbml_representation.dbml
 output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
 ```
 
+If the optional exploratory script (section 11) is run, it adds:
+
+```text
+output/02_relationship_assessments/exploratory_shared_column_relationship_discovery.csv
+```
+
 Check generated files:
 
 ```bash
 find output -maxdepth 2 -type f | sort
 ```
-
 
 ## 8. Output groups and manuscript alignment
 
@@ -196,10 +207,9 @@ The relationship-assessment output uses technical category labels. In the manusc
 
 | Repository label | Manuscript-aligned label |
 |---|---|
-| `complete_conservative_inferred_relationship` | Fully complete inferred relationship |
-| `complete_when_link_present_with_null_source_links` | Partially complete inferred relationship |
-| `partial_or_context_dependent_candidate_link` | Context-dependent candidate relationship |
-
+| `fully_complete_inferred_relationship` | Fully complete inferred relationship |
+| `partially_complete_inferred_relationship` | Partially complete inferred relationship |
+| `context-dependent_candidate_relationship` | Context-dependent candidate relationship |
 
 ## 9. Sanity checks
 
@@ -269,13 +279,53 @@ The DBML files should not be interpreted as formal database implementation schem
 
 ## 11. Optional exploratory script
 
-The repository also includes:
-
 ```text
 scripts/exploratory_shared_column_relationship_discovery.py
 ```
 
-This optional script performs a broader same-name column overlap scan. It is not part of the main manuscript workflow. It can be used to illustrate why documentation-informed selection and conceptual interpretation are needed before treating shared column names as meaningful relationships.
+This optional script compares every same-name column pair across the 22 hospital-module tables, without using MIMIC-IV documentation. It is not needed to produce the candidate relationship checks, but its results are reported in the manuscript (section "Manual review burden and automation potential") to show which links automated discovery can and cannot identify.
+
+Run it after the main workflow, from the repository root:
+
+```bash
+python3 scripts/exploratory_shared_column_relationship_discovery.py mimiciv_demo.duckdb
+```
+
+Output:
+
+```text
+output/02_relationship_assessments/exploratory_shared_column_relationship_discovery.csv
+```
+
+Each candidate link receives one exploratory assessment label:
+
+| Exploratory label | Meaning |
+|---|---|
+| `complete_candidate_reference_link` | All non-null source values match, target values are unique, and no source values are null |
+| `complete_when_link_present_target_unique` | All non-null source values match and target values are unique, but some source values are null |
+| `all_non_null_values_match_but_target_not_unique` | All non-null source values match, but the target column is not unique (for example, two event tables that share a patient or admission identifier) |
+| `partial_or_context_dependent_value_overlap` | Some non-null source values do not match the target |
+
+Expected results:
+
+- 500 same-name candidate links
+- 32 clean links (28 `complete_candidate_reference_link` and 4 `complete_when_link_present_target_unique`), of which 31 correspond to curated candidate relationship checks; the remaining clean link (`poe_detail.subject_id`) is covered in the curated checks through `poe_id`
+- 221 `all_non_null_values_match_but_target_not_unique`
+- 247 `partial_or_context_dependent_value_overlap`
+- Of the 36 curated checks based on same-name columns, 5 are not recovered as clean links: the context-dependent medication-workflow links (`prescriptions`, `pharmacy` and `emar` to `poe`; `emar` and `emar_detail` to `pharmacy`)
+- The 12 curated checks that depend on documentation (composite keys, prefixed provider columns and differently named code columns) do not appear in the scan
+
+Check the number of candidate links, excluding the header:
+
+```bash
+tail -n +2 output/02_relationship_assessments/exploratory_shared_column_relationship_discovery.csv | wc -l
+```
+
+Expected output:
+
+```text
+500
+```
 
 ## 12. Troubleshooting
 
