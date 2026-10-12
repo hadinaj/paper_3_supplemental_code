@@ -2,7 +2,7 @@
 
 This document records documentation-informed assumptions used before running candidate relationship checks for the MIMIC-IV Demo hospital-module application.
 
-The assumptions below were derived from MIMIC-IV documentation and used to orient the selection and interpretation of candidate relationship checks. They were not treated as proven relationships or formal database constraints. The join-based relationship checks were then used to evaluate how selected candidate links behaved in the Demo data, including whether non-null source values matched the proposed target or reference structure and whether links were fully complete, partially complete, or context-dependent
+The assumptions below were derived from MIMIC-IV documentation and used to orient the selection and interpretation of candidate relationship checks. They were not treated as proven relationships or formal database constraints. The join-based relationship checks were then used to evaluate how selected candidate links behaved in the Demo data, including whether non-null source values matched the proposed target or reference structure and whether links were fully complete, partially complete, or context-dependent.
 
 ## Documentation-informed assumptions
 
