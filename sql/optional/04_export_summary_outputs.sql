@@ -15,7 +15,7 @@
 -- Note:
 -- These outputs provide a small, reproducible example of structural inspection.
 -- The main hospital-module outputs used for the framework application are generated
--- by sql/main/07_export_hosp_identifier_inventory.sql,
+-- by sql/main/07_export_hosp_structural_summaries.sql,
 -- sql/main/08_export_hosp_candidate_relationship_checks.sql, and
 -- sql/main/09_generate_hosp_inferred_relationships_dbml.sql.
 
