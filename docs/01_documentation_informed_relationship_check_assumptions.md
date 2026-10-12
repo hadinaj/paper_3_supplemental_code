@@ -5,6 +5,7 @@ This document records documentation-informed assumptions used before running can
 The assumptions below were derived from MIMIC-IV documentation and used to orient the selection and interpretation of candidate relationship checks. They were not treated as proven relationships or formal database constraints. The join-based relationship checks were then used to evaluate how selected candidate links behaved in the Demo data, including whether non-null source values matched the proposed target or reference structure and whether links were fully complete, partially complete, or context-dependent.
 
 ## Documentation-informed assumptions
+The table lists 30 documentation-informed assumptions.
 
 | Documentation-informed assumption used before relationship checks | MIMIC-IV documentation support* | Candidate relationship checks affected |
 |---|---|---|
@@ -16,7 +17,7 @@ The assumptions below were derived from MIMIC-IV documentation and used to orien
 | Treat `transfer_id` as location-level, not admission-level. | “`transfer_id` is unique to a patient physical location.” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/transfers.html)) | Supports modeling transfers as care-location events rather than admissions. |
 | Interpret `services` as clinical service context linked to patient/admission. | “describes the service that a patient was admitted under” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/services.html)) | `services.subject_id` → `patients.subject_id`; `services.hadm_id` → `admissions.hadm_id`. |
 | Treat `labevents.itemid` as linking to the lab item dictionary. | “d_labitems on `itemid`” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/labevents.html)) | `labevents.itemid` → `d_labitems.itemid`. |
-| Interpret null `hadm_id` in laboratory rows cautiously. | “does not always perfectly capture labs proximal to the hospital stay” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/labevents.html)) | `labevents.hadm_id` → `admissions.hadm_id`; supports “supports classification as a partially complete inferred relationship.” |
+| Interpret null `hadm_id` in laboratory rows cautiously. | “does not always perfectly capture labs proximal to the hospital stay” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/labevents.html)) | `labevents.hadm_id` → `admissions.hadm_id`;  supports classification as a partially complete inferred relationship. |
 | Treat `d_labitems` as the reference structure for lab item concepts. | “definitions for all `itemid` associated with lab measurements” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/d_labitems.html)) | `labevents.itemid` → `d_labitems.itemid`; lab item reference entity. |
 | Interpret microbiology rows as specimen/test/organism/susceptibility structured. | “multiple rows for the single specimen” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/microbiologyevents.html)) | Supports microbiology as its own event/result structure, not a simple admission-level table. |
 | Interpret null `hadm_id` in microbiology rows cautiously. | “does not always perfectly capture labs around the hospital stay” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/microbiologyevents.html)) | `microbiologyevents.hadm_id` → `admissions.hadm_id`; supports null-link context. |
@@ -44,6 +45,8 @@ The assumptions below were derived from MIMIC-IV documentation and used to orien
 ## Selection categories for candidate relationship checks
 
 The main relationship-assessment output evaluated 48 selected candidate relationship checks. These checks were selected using MIMIC-IV documentation, structural inspection outputs, and conceptual-model relevance. They were not intended to exhaustively enumerate all possible joins in the MIMIC-IV Demo hospital module.
+
+Selection followed two principles: each source table was checked against its documented parent or reference structure (for example, `admissions` for `hadm_id`, `d_labitems` for `itemid` and `pharmacy` for `pharmacy_id`), and tables that only share a patient or admission identifier, such as laboratory and microbiology events, were not checked against each other, because their connection runs through the patient or admission.
 
 | Relationship-check category | Count | Why included |
 |---|---:|---|
