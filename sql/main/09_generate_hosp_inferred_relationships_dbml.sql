@@ -15,11 +15,11 @@
 --
 -- Inputs:
 --   - DuckDB tables in the hosp schema, created by 05_load_all_hosp_tables.sql
---   - output/relationship_assessments/hosp_candidate_relationship_checks.csv,
+--   - output/02_relationship_assessments/01_hosp_candidate_relationship_checks.csv,
 --     created by 08_export_hosp_candidate_relationship_checks.sql
 --
 -- Output:
---   - output/schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
+--   - output/03_schema_representations/02_hosp_relationship_enhanced_dbml_representation.dbml
 --
 -- Note:
 -- The generated relationships are inferred modeling relationships for schema
