@@ -36,7 +36,7 @@ def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
     db_path = find_database(repo_root)
 
-    output_dir = repo_root / "output" / "relationship_assessments"
+    output_dir = repo_root / "output" / "02_relationship_assessments"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     output_path = output_dir / "exploratory_shared_column_relationship_discovery.csv"
