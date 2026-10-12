@@ -33,7 +33,7 @@ Generated data outputs are not tracked in this repository.
 ```text
 sql/
   main/        Main SQL/DuckDB scripts for the MIMIC-IV Demo hospital-module application
-  optional/    Earlier or optional exploratory SQL scripts
+  optional/    Early exploratory SQL scripts on a small set of core tables; not used for the manuscript results
 
 docs/
   00_workflow.md
@@ -48,6 +48,7 @@ scripts/
 
 output/        Local generated outputs; ignored by git
 data/          Local data files; ignored by git
+```
 
 ## Software versions
 
@@ -85,7 +86,7 @@ A correct run reproduces the counts reported in the manuscript:
 - 22 hospital-module tables and 229 columns
 - 71 identifier-like columns and 24 shared column names
 - 48 candidate relationship checks: 33 fully complete inferred relationships, 9 partially complete inferred relationships and 6 context-dependent candidate relationships
-- Optional exploratory scan: 500 same-name candidate links, of which 32 have unique target values and no unmatched non-null source values
+- Optional exploratory scan (written to `output/02_relationship_assessments/exploratory_shared_column_relationship_discovery.csv`): 500 same-name candidate links, of which 32 have unique target values and no unmatched non-null source values; 31 of these 32 correspond to curated candidate relationship checks
 
 The workflow was re-executed from a clean clone of this repository, reproducing all counts and classifications reported in the manuscript.
 
