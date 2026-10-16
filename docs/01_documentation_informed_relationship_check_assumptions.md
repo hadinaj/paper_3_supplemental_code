@@ -57,6 +57,18 @@ Selection followed two principles: each source table was checked against its doc
 | Order, medication, and detail workflow checks | **11** | Selected documented or model-relevant workflow links were checked among `poe`, `poe_detail`, `prescriptions`, `pharmacy`, `emar`, and `emar_detail`. |
 | **Total** | **48** | Selected candidate relationship checks used in the main relationship assessment. |
 
+## Extension: ICU and ED modules
+
+For the extension of the application to the ICU module (MIMIC-IV Clinical Database Demo v2.2) and the emergency department module (MIMIC-IV-ED Demo v2.2), three further documentation-informed assumptions were recorded before the extension checks in `sql/main/12_export_extension_relationship_checks.sql` were run.
+
+| Documentation-informed assumption used before relationship checks | MIMIC-IV documentation support* | Candidate relationship checks affected |
+|---|---|---|
+| Treat `icustays` and `d_items` as the reference structures of the ICU module. | "MetaVision tables were denormalized to create a star schema where the icustays and d_items tables link to a set of data tables all suffixed with 'events'." "All events tables contain a stay_id column allowing identification of the associated ICU patient in icustays, and an itemid column allowing identification of the concept documented in d_items." ([MIMIC](https://mimic.mit.edu/docs/IV/modules/icu/)) | ICU event tables → `icustays.stay_id`; ICU event tables → `d_items.itemid` (12 checks) |
+| Treat `stay_id` as derived from the earliest `transfer_id` of a unit stay. | "As stay_id is generated using the earliest transfer_id existing for the department (e.g. the first transfer_id for an ICU), stay_id and transfer_id are often identical for the same ward stay." ([MIMIC](https://mimic.mit.edu/docs/IV/about/schema-overview/)) | `icustays.stay_id` → `transfers.transfer_id`; `edstays.stay_id` → `transfers.transfer_id` (2 checks) |
+| Treat the ED module as linkable to the hospital module through `subject_id`. | "the MIMIC-IV-ED demo is linkable to the MIMIC-IV Clinical Database demo via subject_id" ([PhysioNet](https://doi.org/10.13026/jzz5-vs76)) | ED tables → `patients.subject_id` (6 checks) |
+
+The remaining extension checks follow the same selection principles as the hospital-module checks: ICU event tables → `caregiver.caregiver_id` (6); `icustays.subject_id` → `patients.subject_id` (1); `icustays`, the six ICU event tables and `edstays` → `admissions.hadm_id` (8); and the five ED data tables → `edstays.stay_id` (5). In total, 40 extension checks were evaluated (12 + 2 + 6 + 6 + 1 + 8 + 5).
+
 ## Relationship to the SQL checks
 
 These documentation-informed assumptions helped define candidate reference structures, table roles, and plausible linking columns before the relationship checks were run. Structural inspection outputs then confirmed which relevant columns were present in the loaded MIMIC-IV Demo hospital-module tables.

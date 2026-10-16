@@ -327,7 +327,38 @@ Expected output:
 500
 ```
 
-## 12. Troubleshooting
+## 12. Extension and evaluation scripts (added in the revision)
+
+These steps extend the application to the ICU module and the MIMIC-IV-ED Demo, and add the evaluations reported in Section 3.4 of the manuscript. Run them after the main workflow (section 5).
+
+Place the additional source files under:
+
+```text
+data/raw/mimic-iv-clinical-database-demo-2.2/icu/   (9 files from the same Demo download)
+data/raw/mimic-iv-ed-demo-2.2/ed/                     (6 files from the MIMIC-IV-ED Demo v2.2)
+```
+
+```bash
+duckdb mimiciv_demo.duckdb < sql/main/10_load_icu_ed_tables.sql
+duckdb mimiciv_demo.duckdb < sql/main/11_export_extension_structural_summaries.sql
+duckdb mimiciv_demo.duckdb < sql/main/12_export_extension_relationship_checks.sql
+duckdb mimiciv_demo.duckdb < sql/main/13_compare_declared_foreign_keys.sql
+python3 scripts/independent_reimplementation_check.py
+python3 scripts/published_conversion_checks.py   # optional; needs the FHIR and OMOP demo releases under data/raw/
+```
+
+| Script | What it does | Output |
+|---|---|---|
+| `10_load_icu_ed_tables.sql` | Loads the 9 ICU and 6 ED tables into the `icu` and `ed` schemas | DuckDB tables |
+| `11_export_extension_structural_summaries.sql` | Column inventory, row counts and identifier-like columns for ICU and ED, using the same naming rule as script 07 | `output/01_structural_summaries/05`–`07_extension_*.csv` |
+| `12_export_extension_relationship_checks.sql` | 40 join-based checks within the ICU and ED modules and between them and the hospital module; same classification rule as script 08 | `output/02_relationship_assessments/02_extension_candidate_relationship_checks.csv` |
+| `13_compare_declared_foreign_keys.sql` | Compares the 48 classified hospital-module checks with the 29 foreign keys declared in MIMIC-IV's build scripts (MIMIC Code Repository, commit b24cb8e); the declared keys were not used to select or classify the checks | `output/02_relationship_assessments/03_*.csv`, `04_*.csv` |
+| `independent_reimplementation_check.py` | Recomputes the hospital-module counts and all 88 checks with pandas and compares them with the SQL outputs; exits with an error if any count differs | `output/02_relationship_assessments/05_independent_reimplementation_comparison.csv` |
+| `published_conversion_checks.py` | Counts laboratory Observations without an encounter (FHIR) and visit and provider links (OMOP) in the published demo conversions | `output/02_relationship_assessments/06_published_conversion_checks.csv` |
+
+Expected results: 40 extension checks (37 fully complete, 3 partially complete, 0 context-dependent); 28 of the 48 hospital-module checks correspond to a declared foreign key (26 fully complete, 2 partially complete, 0 context-dependent); 0 differences between the pandas and SQL implementations.
+
+## 13. Troubleshooting
 
 If a script cannot find the raw MIMIC-IV Demo files, check that the files are placed under:
 
@@ -352,7 +383,7 @@ pwd
 ls sql/main
 ```
 
-## 13. Git notes
+## 14. Git notes
 
 The following are local/generated and should not be committed:
 
