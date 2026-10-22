@@ -5,7 +5,7 @@ Purpose
 Recomputes, with pandas and without DuckDB/SQL, the structural counts and every
 candidate relationship check reported by the SQL workflow, and compares the results
 count by count. This provides a second, independent implementation of the
-rule-based classification (manuscript Section 3.4).
+rule-based classification.
 
 Usage (from the repository root, after running sql/main/05-12):
     python3 scripts/independent_reimplementation_check.py

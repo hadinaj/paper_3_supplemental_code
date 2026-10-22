@@ -4,9 +4,19 @@ This repository supports the framework application described in the manuscript:
 
 **Conceptual Data Modeling of EHR-Derived Clinical Data: A Stakeholder-Oriented Methodological Framework**
 
-The repository contains SQL/DuckDB scripts and supporting documentation used to apply the framework to the MIMIC-IV Demo hospital module, with the ICU module and the MIMIC-IV-ED Demo as an extension. The repository supports the reproducible technical parts of the framework: identifying input data structures and documentation, inspecting source data structures, and constructing a conceptual data model artifact.
+The repository contains SQL/DuckDB scripts and supporting documentation used to apply the framework to the MIMIC-IV Demo hospital module, with the ICU module and the MIMIC-IV-ED Demo as an extension. The repository supports the reproducible technical steps of the framework (Steps 1–3): identifying input data structures and documentation, inspecting source data structures, and constructing the conceptual data model. Presenting the conceptual data model (Step 4) and review, refinement, and adaptation by stakeholders involved in data reuse (Step 5) are not covered by the code; Step 5 was not carried out in this MIMIC-IV Demo application.
 
-Stakeholder review, refinement, and organizational use are part of the proposed framework, but were not empirically implemented in this MIMIC-IV Demo application.
+## Framework steps and repository contents
+
+The framework is not a fixed pipeline, and its steps can be revisited; the labels below only help the reader find the parts of the repository that support each step.
+
+| Framework step | Repository contents |
+|---|---|
+| 1. Identify input data structures and documentation | `docs/01_documentation_informed_relationship_check_assumptions.md` (documentation-informed assumptions recorded before the checks) |
+| 2. Inspect source data structures | `sql/main/05`–`13`, `scripts/` (structural summaries, candidate relationship checks, DBML schema representations, extension and evaluation checks) |
+| 3. Construct the conceptual data model | `docs/03_source_to_concept_attribute_dictionary.csv` (source columns mapped to conceptual entities, attributes, and attribute groups) |
+| 4. Present the conceptual data model | Not covered by the code |
+| 5. Review, refinement, and adaptation by stakeholders involved in data reuse | Not covered by the code; not carried out in this application |
 
 ## Scope of this repository
 
@@ -19,10 +29,10 @@ This repository supports:
 - extension: loading the 9 ICU-module and 6 ED-module tables and evaluating 40 candidate relationship checks within these modules and between them and the hospital module;
 - comparing the 48 classified checks with the foreign key constraints declared in the MIMIC Code Repository;
 - re-implementing all checks independently in Python (pandas) and comparing the results count by count;
-- reporting how two flagged relationships are represented in the published FHIR and OMOP conversions of the MIMIC-IV Demo;
+- reporting how two relationships flagged for review (laboratory results without a hospital admission, and provider links) are represented in the published FHIR and OMOP conversions of the MIMIC-IV Demo;
 - running an optional exploratory same-name column scan that illustrates which links automated discovery can and cannot identify;
 - generating source-structure schema representations in Database Markup Language (DBML);
-- documenting how inspected source structures were interpreted during conceptual model construction.
+- documenting the assumptions drawn from the MIMIC-IV documentation and how source columns were mapped to conceptual model elements.
 
 The generated outputs are intended to support methodological transparency and reproducibility. They should not be interpreted as formal database constraints, declared primary-key/foreign-key specifications, exhaustive relationship discovery results, or stakeholder-validated conceptual models.
 
@@ -46,10 +56,7 @@ sql/
 docs/
   00_workflow.md
   01_documentation_informed_relationship_check_assumptions.md
-  02_conceptual_entity_mapping.md
   03_source_to_concept_attribute_dictionary.csv
-  04_conceptual_model_representation_notes.md
-  05_conceptual_model_entity_crosswalk.md
 
 scripts/
   exploratory_shared_column_relationship_discovery.py
@@ -65,8 +72,7 @@ data/          Local data files; ignored by git
 The workflow was developed and re-executed with:
 
 - DuckDB command-line interface 1.5.2
-- Python 3.11.2 with the `duckdb` package 1.5.2
-- Python 3 with `pandas`, for the two scripts added in the revision
+- Python 3.11.2 with the `duckdb` package 1.5.2 and the `pandas` package 3.0.2
 
 ## How to reproduce
 

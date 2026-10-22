@@ -4,9 +4,9 @@ This document describes how to reproduce the technical workflow for the MIMIC-IV
 
 **Conceptual Data Modeling of EHR-Derived Clinical Data: A Stakeholder-Oriented Methodological Framework**
 
-The workflow supports the reproducible technical parts of the framework: identifying input data structures and documentation, inspecting source data structures, and generating outputs used for conceptual data model artifact construction.
+The workflow supports the reproducible technical steps of the framework (Steps 1–3): identifying input data structures and documentation, inspecting source data structures, and generating outputs used to construct the conceptual data model. The scripts described here belong to Step 2.
 
-Stakeholder review, refinement, and adaptation are part of the proposed framework, but they are not empirically implemented in this repository.
+Presenting the conceptual data model (Step 4) and review, refinement, and adaptation by stakeholders involved in data reuse (Step 5) are not covered by the code; Step 5 was not carried out in this application.
 
 ## 1. Before running
 
@@ -76,10 +76,10 @@ Check that DuckDB is available:
 duckdb --version
 ```
 
-The optional exploratory script (section 11) additionally requires Python 3 with the `duckdb` package:
+The Python scripts (sections 11 and 12) additionally require Python 3 with the `duckdb` and `pandas` packages:
 
 ```bash
-python3 -c "import duckdb; print(duckdb.__version__)"
+python3 -c "import duckdb, pandas; print(duckdb.__version__, pandas.__version__)"
 ```
 
 ## 4. Generated output folders
@@ -185,11 +185,11 @@ Check generated files:
 find output -maxdepth 2 -type f | sort
 ```
 
-## 8. Output groups and manuscript alignment
+## 8. Output groups and labels
 
-The generated output folders correspond to the manuscript output groups as follows:
+The generated output folders correspond to the following output groups:
 
-| Output folder | Manuscript-aligned output group |
+| Output folder | Output group |
 |---|---|
 | `output/01_structural_summaries/` | Structural inventories and summaries |
 | `output/02_relationship_assessments/` | Relationship-assessment outputs |
@@ -197,15 +197,15 @@ The generated output folders correspond to the manuscript output groups as follo
 
 The DBML outputs correspond to:
 
-| Filename | Manuscript-aligned wording |
+| Filename | Description |
 |---|---|
 | `01_hosp_tables_only_dbml_representation.dbml` | Tables-only DBML representation |
 | `02_hosp_relationship_enhanced_dbml_representation.dbml` | Relationship-enhanced DBML representation |
 | Both DBML files together | Source-oriented DBML schema representations |
 
-The relationship-assessment output uses technical category labels. In the manuscript, these are reported using more readable relationship-category names:
+The relationship-assessment output uses technical category labels, which correspond to the following relationship categories:
 
-| Repository label | Manuscript-aligned label |
+| Repository label | Relationship category |
 |---|---|
 | `fully_complete_inferred_relationship` | Fully complete inferred relationship |
 | `partially_complete_inferred_relationship` | Partially complete inferred relationship |
@@ -283,7 +283,7 @@ The DBML files should not be interpreted as formal database implementation schem
 scripts/exploratory_shared_column_relationship_discovery.py
 ```
 
-This optional script compares every same-name column pair across the 22 hospital-module tables, without using MIMIC-IV documentation. It is not needed to produce the candidate relationship checks, but its results are reported in the manuscript (section "Manual review burden and automation potential") to show which links automated discovery can and cannot identify.
+This optional script compares every same-name column pair across the 22 hospital-module tables, without using MIMIC-IV documentation. It is not needed to produce the candidate relationship checks; it shows which links automated discovery can and cannot identify.
 
 Run it after the main workflow, from the repository root:
 
@@ -327,9 +327,9 @@ Expected output:
 500
 ```
 
-## 12. Extension and evaluation scripts (added in the revision)
+## 12. Extension and evaluation scripts
 
-These steps extend the application to the ICU module and the MIMIC-IV-ED Demo, and add the evaluations reported in Section 3.4 of the manuscript. Run them after the main workflow (section 5).
+These steps extend the application to the ICU module and the MIMIC-IV-ED Demo, and add evaluations of the candidate relationship checks. Run them after the main workflow (section 5).
 
 Place the additional source files under:
 

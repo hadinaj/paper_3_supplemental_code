@@ -3,7 +3,7 @@
 Purpose
 -------
 Shows how two relationships flagged in the conceptual data model are represented in the
-published FHIR and OMOP conversions of the MIMIC-IV Demo (manuscript Sections 3.4 and 4):
+published FHIR and OMOP conversions of the MIMIC-IV Demo:
   - laboratory results without a hospital admission (labevents.hadm_id is null in
     28,420 of 107,727 rows; partially complete in check 08);
   - provider links (provider_id columns; partially complete in check 08).
