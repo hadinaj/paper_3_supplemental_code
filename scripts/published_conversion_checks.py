@@ -6,7 +6,8 @@ Shows how two relationships flagged in the conceptual data model are represented
 published FHIR and OMOP conversions of the MIMIC-IV Demo:
   - laboratory results without a hospital admission (labevents.hadm_id is null in
     28,420 of 107,727 rows; partially complete in check 08);
-  - provider links (provider_id columns; partially complete in check 08).
+  - provider links (provider_id columns; partially complete in check 08);
+  - in OMOP, the visits created for events outside a hospital admission.
 
 Usage (from the repository root):
     python3 scripts/published_conversion_checks.py
@@ -55,6 +56,11 @@ rows += [
 meas = pd.read_csv(os.path.join(OMOP, "measurement.csv"), usecols=["visit_occurrence_id", "provider_id"], low_memory=False)
 drug = pd.read_csv(os.path.join(OMOP, "drug_exposure.csv"), usecols=["visit_occurrence_id", "provider_id"], low_memory=False)
 prov = pd.read_csv(os.path.join(OMOP, "provider.csv"))
+visits = pd.read_csv(os.path.join(OMOP, "visit_occurrence.csv"), usecols=["visit_occurrence_id", "visit_concept_id", "visit_source_value"])
+# Visits created by the conversion for events outside a hospital admission:
+# concept 38004207 (Ambulatory Clinic/Center), identified by patient and date ("subject_id|YYYY-MM-DD").
+day_visits = visits[(visits.visit_concept_id == 38004207)
+                    & visits.visit_source_value.astype(str).str.contains(r"\|\d{4}-\d{2}-\d{2}$")]
 rows += [
     ("OMOP", "measurement", "rows", len(meas)),
     ("OMOP", "measurement", "rows without visit_occurrence_id", int(meas.visit_occurrence_id.isna().sum())),
@@ -62,6 +68,9 @@ rows += [
     ("OMOP", "drug_exposure", "rows", len(drug)),
     ("OMOP", "drug_exposure", "rows with provider_id", int(drug.provider_id.notna().sum())),
     ("OMOP", "provider", "rows", len(prov)),
+    ("OMOP", "visit_occurrence", "rows", len(visits)),
+    ("OMOP", "visit_occurrence", "Ambulatory Clinic/Center visits identified by patient and date", len(day_visits)),
+    ("OMOP", "measurement", "rows assigned to these visits", int(meas.visit_occurrence_id.isin(day_visits.visit_occurrence_id).sum())),
 ]
 out = pd.DataFrame(rows, columns=["standard", "table_or_resource", "measure", "value"])
 out.to_csv("output/02_relationship_assessments/06_published_conversion_checks.csv", index=False)

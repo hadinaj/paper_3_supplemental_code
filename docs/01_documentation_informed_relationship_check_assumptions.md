@@ -1,13 +1,10 @@
-# Documentation-Informed Relationship Check Assumptions
+# Recorded assumptions (Step 1)
 
-This document records documentation-informed assumptions used before running candidate relationship checks for the MIMIC-IV Demo hospital-module application.
+Before the relationship checks were run, the MIMIC-IV documentation was used to formulate assumptions about table roles, identifiers, and plausible links. Each assumption is listed with the documentation quote it is based on and the checks it affects. The assumptions guided the selection of checks; they were not treated as established relationships or database constraints.
 
-The assumptions below were derived from MIMIC-IV documentation and used to orient the selection and interpretation of candidate relationship checks. They were not treated as proven relationships or formal database constraints. The join-based relationship checks were then used to evaluate how selected candidate links behaved in the Demo data, including whether non-null source values matched the proposed target or reference structure and whether links were fully complete, partially complete, or context-dependent.
+## Hospital module (30 assumptions)
 
-## Documentation-informed assumptions
-The table lists 30 documentation-informed assumptions.
-
-| Documentation-informed assumption used before relationship checks | MIMIC-IV documentation support* | Candidate relationship checks affected |
+| Assumption | Documentation quote | Checks affected |
 |---|---|---|
 | Use the `hosp` module as the hospital-wide EHR-derived source scope. | “hospital (`hosp`) module contains data acquired from the hospital wide electronic health record” ([MIMIC](https://mimic.mit.edu/docs/IV/about/schema-overview.html)) | Selection of hosp tables; exclusion of ICU-specific checks. |
 | Treat `subject_id` as the patient-level identifier. | “`subject_id` is a unique identifier which specifies an individual patient.” ([MIMIC](https://mimic.mit.edu/docs/IV/about/schema-overview.html)) | Source table `subject_id` → `patients.subject_id` checks. |
@@ -40,11 +37,11 @@ The table lists 30 documentation-informed assumptions.
 | Treat DRG records as hospitalization-related reimbursement/billing structures. | “DRGs are used by the hospital to obtain reimbursement” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/drgcodes.html)) | `drgcodes.subject_id` → `patients.subject_id`; `drgcodes.hadm_id` → `admissions.hadm_id`. |
 | Treat OMR as patient-level/miscellaneous EHR context, not admission-linked by default. | “stores miscellaneous information documented in the electronic health record” ([MIMIC](https://mimic.mit.edu/docs/IV/modules/hosp/omr.html)) | `omr.subject_id` → `patients.subject_id`; no direct `omr.hadm_id` → `admissions.hadm_id` check. |
 
-\* Row-level links in the excerpt column point to the relevant MIMIC-IV documentation pages used to support each documentation-informed assumption.
+Each quote links to the documentation page it is taken from.
 
-## Selection categories for candidate relationship checks
+## How the 48 hospital-module checks were selected
 
-The main relationship-assessment output evaluated 48 selected candidate relationship checks. These checks were selected using MIMIC-IV documentation, structural inspection outputs, and conceptual-model relevance. They were not intended to exhaustively enumerate all possible joins in the MIMIC-IV Demo hospital module.
+The checks were selected using the assumptions above, the structural summaries, and their relevance for the conceptual data model. They do not enumerate all possible joins.
 
 Selection followed two principles: each source table was checked against its documented parent or reference structure (for example, `admissions` for `hadm_id`, `d_labitems` for `itemid` and `pharmacy` for `pharmacy_id`), and tables that only share a patient or admission identifier, such as laboratory and microbiology events, were not checked against each other, because their connection runs through the patient or admission.
 
@@ -57,11 +54,11 @@ Selection followed two principles: each source table was checked against its doc
 | Order, medication, and detail workflow checks | **11** | Selected documented or model-relevant workflow links were checked among `poe`, `poe_detail`, `prescriptions`, `pharmacy`, `emar`, and `emar_detail`. |
 | **Total** | **48** | Selected candidate relationship checks used in the main relationship assessment. |
 
-## Extension: ICU and ED modules
+## Extension: ICU and ED modules (3 assumptions)
 
-For the extension of the application to the ICU module (MIMIC-IV Clinical Database Demo v2.2) and the emergency department module (MIMIC-IV-ED Demo v2.2), three further documentation-informed assumptions were recorded before the extension checks in `sql/main/12_export_extension_relationship_checks.sql` were run.
+Three further assumptions were recorded before the extension checks in `sql/main/12_export_extension_relationship_checks.sql` were run.
 
-| Documentation-informed assumption used before relationship checks | MIMIC-IV documentation support* | Candidate relationship checks affected |
+| Assumption | Documentation quote | Checks affected |
 |---|---|---|
 | Treat `icustays` and `d_items` as the reference structures of the ICU module. | "MetaVision tables were denormalized to create a star schema where the icustays and d_items tables link to a set of data tables all suffixed with 'events'." "All events tables contain a stay_id column allowing identification of the associated ICU patient in icustays, and an itemid column allowing identification of the concept documented in d_items." ([MIMIC](https://mimic.mit.edu/docs/IV/modules/icu/)) | ICU event tables → `icustays.stay_id`; ICU event tables → `d_items.itemid` (12 checks) |
 | Treat `stay_id` as derived from the earliest `transfer_id` of a unit stay. | "As stay_id is generated using the earliest transfer_id existing for the department (e.g. the first transfer_id for an ICU), stay_id and transfer_id are often identical for the same ward stay." ([MIMIC](https://mimic.mit.edu/docs/IV/about/schema-overview/)) | `icustays.stay_id` → `transfers.transfer_id`; `edstays.stay_id` → `transfers.transfer_id` (2 checks) |
@@ -69,13 +66,9 @@ For the extension of the application to the ICU module (MIMIC-IV Clinical Databa
 
 The remaining extension checks follow the same selection principles as the hospital-module checks: ICU event tables → `caregiver.caregiver_id` (6); `icustays.subject_id` → `patients.subject_id` (1); `icustays`, the six ICU event tables and `edstays` → `admissions.hadm_id` (8); and the five ED data tables → `edstays.stay_id` (5). In total, 40 extension checks were evaluated (12 + 2 + 6 + 6 + 1 + 8 + 5).
 
-## Relationship to the SQL checks
+## How the assumptions were checked
 
-These documentation-informed assumptions helped define candidate reference structures, table roles, and plausible linking columns before the relationship checks were run. Structural inspection outputs then confirmed which relevant columns were present in the loaded MIMIC-IV Demo hospital-module tables.
-
-The SQL relationship checks evaluated selected candidate links empirically in the MIMIC-IV Demo data. The checks assessed whether non-null source values matched the proposed target or reference structure and whether each selected link was complete, complete when present but not always populated, or partial/context-dependent.
-
-The selected checks should be interpreted as a curated, documentation- and structure-informed relationship assessment set. They should not be interpreted as an exhaustive discovery of all possible joins or as formal primary-key/foreign-key constraints.
+The join-based checks (`sql/main/08` and `12`) test each selected link in the data and classify it by a fixed rule: fully complete (every source row links and every link matches), partially complete (some linking values are missing, but every value present matches), or context-dependent (some values present do not match the target). The checks are a curated set, not an exhaustive search for joins, and not declared primary or foreign key constraints.
 
 ## References
 
