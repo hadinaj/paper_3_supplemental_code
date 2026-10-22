@@ -10,7 +10,7 @@ The workflow applies the framework to the MIMIC-IV Clinical Database Demo: the h
 |---|---|---|
 | 1. Identify input data structures and documentation | Source tables, documentation, and recorded assumptions | `docs/01_documentation_informed_relationship_check_assumptions.md`: each assumption with its documentation quote |
 | 2. Inspect source data structures | Structural summaries and relationship checks | `sql/main/05`–`12` and `14`: table and column inventories, identifier-like and shared columns, classified relationship checks, DBML schema representations, and follow-up counts for selected links |
-| 3. Construct the conceptual data model | Entities, attributes, and classified relationships | `docs/03_source_to_concept_attribute_dictionary.csv`: each source column mapped to a conceptual entity, attribute, and attribute group |
+| 3. Construct the conceptual data model | Entities, attributes, and classified relationships | `docs/02_source_to_concept_attribute_dictionary.csv`: each source column mapped to a conceptual entity, attribute, and attribute group |
 | 4. Present the conceptual data model | Model views, flagged relationships, and recorded assumptions | Not covered by the code; the model views are in the article |
 | 5. Review, refinement, and adaptation by stakeholders involved in data reuse | | Not covered by the code; not carried out in this application |
 | Evaluation of the application (not a framework step) | | `sql/main/13` and `scripts/`: comparison with declared foreign keys, independent re-implementation, same-name column scan, and checks in the published FHIR and OMOP conversions |
