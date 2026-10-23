@@ -6,7 +6,7 @@ The code inspects the tables of the MIMIC-IV Clinical Database Demo and the MIMI
 
 ## Data you need
 
-The data is not included. Download it from PhysioNet and place each dataset in a folder under `data/raw/`:
+The data is not included. Download it from PhysioNet and place each dataset, as unpacked, in a folder under `data/raw/`:
 
 | Dataset | Folder under `data/raw/` |
 |---|---|
@@ -40,7 +40,7 @@ python3 scripts/exploratory_shared_column_relationship_discovery.py mimiciv_demo
 python3 scripts/published_conversion_checks.py
 ```
 
-The SQL scripts create the DuckDB database `mimiciv_demo.duckdb` and must run in this order. All results are written to `output/`.
+The commands create the DuckDB database file `mimiciv_demo.duckdb`; the SQL scripts must run in this order. All results are written to `output/`.
 
 ## Repository contents
 
@@ -52,7 +52,7 @@ scripts/       Python scripts: independent re-implementation, same-name column s
 docs/          documentation of the manual steps (not used by the scripts)
 ```
 
-| Script | Output in `output/` |
+| Script | What it produces (files in `output/`) |
 |---|---|
 | `sql/main/05_load_all_hosp_tables.sql` | loads the 22 hospital-module tables |
 | `sql/main/06_generate_hosp_master_schema_dbml.sql` | `03_schema_representations/01_hosp_tables_only_dbml_representation.dbml` |
@@ -72,7 +72,7 @@ Each relationship-check file has one row per check: the checked link, five count
 
 ## Documentation of the manual steps (`docs/`)
 
-`docs/01_documentation_informed_relationship_check_assumptions.md` lists the 33 assumptions recorded before the checks were run, each with the quote from the MIMIC-IV documentation it is based on, a link to that page, and the checks it affects.
+`docs/01_documentation_informed_relationship_check_assumptions.md` lists the 33 assumptions recorded before the checks were run, each with the documentation quote it is based on, a link to that page, and the checks it affects.
 
 `docs/02_source_to_concept_attribute_dictionary.csv` records, for each of the 229 hospital-module columns, how it was represented in the conceptual data model. Its columns:
 
